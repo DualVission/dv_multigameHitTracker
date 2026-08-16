@@ -1,0 +1,98 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Manifest Schema",
+    "type": "object",
+    "properties": {
+        "package": {
+            "description": "This describes your package.",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "This is the name of your package.",
+                    "type": "string",
+                    "examples": [
+                        "The Legend of Zelda God Run",
+                        "Nintendo Mashup God Run"
+                    ]
+                },
+                "version": {
+                    "description": "This is the version number of this distribution.",
+                    "type": "string",
+                    "examples": [
+                        "2026-08-08",
+                        "1.0.0.0"
+                    ]
+                },
+                "package_id": {
+                    "description": "This is how dv_MGHT will compare version number.",
+                    "type": "string",
+                    "examples": [
+                        "dv-loz-gr",
+                        "dv-nintndo-gr"
+                    ]
+                },
+                "games": {
+                    "description": "This is a list of included games.",
+                    "type": "array",
+                    "items": {
+                        "description": "Please use the game's title as it appears on Wikipedia.",
+                        "type": "string"
+                    }
+                },
+                "has_splits": {
+                    "description": "This indicates if the package has splits.\nDefining but not enabling splits may cause unintended behaviors.",
+                    "type": "boolean",
+                }
+            },
+            "required": [
+                "name",
+                "version",
+                "package_id",
+                "games"
+            ]
+        },
+        "repository": {
+            "description": "This helps users follow and credit packages.",
+            "type": "object",
+            "properties": {
+                "authors": {
+                    "description": "This is the list of authors for your package.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "This is an individual author's name."
+                    }
+                },
+                "link": {
+                    "description": "This is the public link of your package.\nOnly point to top level repositories, the downloads page, or the author's' account.",
+                    "type": "uri",
+                    "examples": [
+                        "https://github.com/dualvission/dv_multigame_hittracker/"
+                    ]
+                },
+                "source": {
+                    "description": "This specifies if the package is open or closed source.",
+                    "enum": [
+                        "open",
+                        "closed"
+                    ]
+                },
+                "license": {
+                    "description": "This indicates the package's licensing.",
+                    "type": "string",
+                    "examples": [
+                        "GNU General Public License Version 3",
+                        "MIT"
+                    ]
+                }
+            },
+            "required": [
+                "authors"
+            ]
+        }
+    },
+    "required": [
+        "package",
+        "repository"
+    ]
+}

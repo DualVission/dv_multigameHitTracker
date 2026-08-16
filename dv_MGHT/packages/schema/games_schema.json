@@ -1,0 +1,88 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Games Schema",
+    "type": "array",
+    "items": {
+        "description": "This lists games in the package along with each game's data.",
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "This lists information associated with the game.",
+                "type": "object",
+                "properties": {
+                    "game": {
+                        "description": "This is the game's title as it appears on Wikipedia.",
+                        "type": "string",
+                        "examples": [
+                            ""
+                        ]
+                    },
+                    "caption": {
+                        "description": "This is the default caption used in dv_MGHT.",
+                        "type": "string",
+                        "examples": [
+                            ""
+                        ]
+                    },
+                    "game_id": {
+                        "description": "This is how dv_MGHT will refer to it in customization.",
+                        "type": "string",
+                        "examples": [
+                            ""
+                        ]
+                    }
+                },
+                "required": [
+                    "game_id"
+                ]
+            },
+            "route": {
+                "description": "This is the name of the route used.",
+                "type": "string",
+                "examples": [
+                    ""
+                ]
+            },
+            "split_type": {
+                "description": "This is how the user interacts with the splits.",
+                "enum": [
+                    "linear",
+                    "segmented"
+                ]
+            },
+            "splits": {
+                "description": "This lists the splits.",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "split_id": {
+                            "description": "This is how dv_MGHT will refer to it in customization.",
+                            "type": "string",
+                            "examples": [
+                                ""
+                            ]
+                        },
+                        "caption": {
+                            "description": "This is the default caption used in dv_MGHT.",
+                            "type": "string",
+                            "examples": [
+                                ""
+                            ]
+                        },
+                        "splits": {
+                            "description": "Please note that splits can own splits recursively.",
+                            "$ref": "#"
+                        }
+                    },
+                    "required": [
+                        "split_id"
+                    ]
+                }
+            }
+        },
+        "required": [
+            "name"
+        ]
+    }
+}

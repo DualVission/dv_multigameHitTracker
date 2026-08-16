@@ -1,2 +1,26 @@
-# dv_multigameHitTracker
+# DualVission's Multigame Hit Tracker  
+> dv_MGHT `[diː viː ˈmaɪt]` 
 
+# TODO
+#Explain use and package implementation. 
+  
+Yes, I did copy my code from (Randovania)[https://github.com/randovania/randovania/]  
+
+> [!IMPORTANT]Legal disclaimer
+> DualVission's Multigame Hit Tracker  is a tracker for hits taken in multiple games in segmented runs.
+> Copyright (C) 2026  Zach the DualVission
+
+> This program is free software: you can redistribute it and/or modify
+> it under the terms of the GNU General Public License as published by
+> the Free Software Foundation, either version 3 of the License, or
+> (at your option) any later version.
+
+> This program is distributed in the hope that it will be useful,
+> but WITHOUT ANY WARRANTY; without even the implied warranty of
+> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> GNU General Public License for more details.
+
+> You should have received a copy of the GNU General Public License
+> along with this program.  If not, see (http://www.gnu.org/licenses/)[http://www.gnu.org/licenses/].
+# TODO
+#Legal disclaimer add regarding strings referencing trademarked materials
