@@ -71,8 +71,7 @@
                             ]
                         },
                         "splits": {
-                            "description": "Please note that splits can own splits recursively.",
-                            "$ref": "#"
+                            "description": "Please note that splits can own splits recursively."
                         }
                     },
                     "required": [

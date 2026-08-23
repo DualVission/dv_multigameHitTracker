@@ -1,6 +1,7 @@
 [
     {
         "name": {
+            "game_id": "",
             "game": "",
             "caption": ""
         },
@@ -8,7 +9,7 @@
         "split_type": "linear",
         "splits": [
             {
-                "id": "",
+                "split_id": "",
                 "caption": "",
                 "splits": [ ]
             }

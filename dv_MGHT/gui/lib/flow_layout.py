@@ -50,11 +50,11 @@ class FlowLayout(QLayout):
     def __init__(self, parent=None, center=False):
         super().__init__(parent)
 
-        if parent is not None:
-            self.setContentsMargins(QMargins(0, 0, 0, 0))
-
         self._item_list: list[QWidgetItem] = []
         self.center = center
+
+        if parent is not None:
+            self.setContentsMargins(QMargins(0, 0, 0, 0))
 
     def __del__(self):
         item = self.takeAt(0)

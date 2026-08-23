@@ -2,13 +2,13 @@
     "package": {
         "name": "The Legend of Zelda God Run",
         "version": "2026-08-08",
-        "id": "dv-loz-gr",
+        "package_id": "dv-loz-gr",
         "games": [
-            "The Legend of Zelda: Ocarina of Time",
+            "The Legend of Zelda: Ocarina of Time (1998)",
             "The Legend of Zelda: Majora's Mask",
-            "The Legend of Zelda: The Wind Waker",
+            "The Legend of Zelda: The Wind Waker HD",
             "The Legend of Zelda: Twilight Princess",
-            "The Legend of Zelda: Skyward Sword",
+            "The Legend of Zelda: Skyward Sword HD",
             "The Legend of Zelda: Breath of the Wild",
             "The Legend of Zelda: Tears of the Kingdom"
         ],

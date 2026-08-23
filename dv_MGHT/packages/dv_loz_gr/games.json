@@ -1,0 +1,114 @@
+[
+    {
+        "name": {
+            "game_id": "oot",
+            "game": "The Legend of Zelda: Ocarina of Time (1998)",
+            "caption": "OOT"
+        },
+        "route": "DJCarmichael",
+        "split_type": "linear",
+        "splits": [
+            {
+                "split_id": "",
+                "caption": "",
+                "splits": [ ]
+            }
+        ]
+    },    {
+        "name": {
+            "game_id": "mm",
+            "game": "The Legend of Zelda: Majora's Mask",
+            "caption": "MM"
+        },
+        "route": "DJCarmichael",
+        "split_type": "linear",
+        "splits": [
+            {
+                "split_id": "",
+                "caption": "",
+                "splits": [ ]
+            }
+        ]
+
+    },    {
+        "name": {
+            "game_id": "twwhd",
+            "game": "The Legend of Zelda: The Wind Waker HD",
+            "caption": "WWHD"
+        },
+        "route": "DJCarmichael",
+        "split_type": "linear",
+        "splits": [
+            {
+                "split_id": "",
+                "caption": "",
+                "splits": [ ]
+            }
+        ]
+
+    },    {
+        "name": {
+            "game_id": "tp",
+            "game": "The Legend of Zelda: Twilight Princess",
+            "caption": "TP"
+        },
+        "route": "DJCarmichael (Dusklight)",
+        "split_type": "linear",
+        "splits": [
+            {
+                "split_id": "",
+                "caption": "",
+                "splits": [ ]
+            }
+        ]
+
+    },    {
+        "name": {
+            "game_id": "sshd",
+            "game": "The Legend of Zelda: Skyward Sword HD",
+            "caption": "SSHD"
+        },
+        "route": "DJCarmichael",
+        "split_type": "linear",
+        "splits": [
+            {
+                "split_id": "",
+                "caption": "",
+                "splits": [ ]
+            }
+        ]
+
+    },    {
+        "name": {
+            "game_id": "botw",
+            "game": "The Legend of Zelda: Breath of the Wild",
+            "caption": "BOTW"
+        },
+        "route": "DJCarmichael (NS2e)",
+        "split_type": "linear",
+        "splits": [
+            {
+                "split_id": "",
+                "caption": "",
+                "splits": [ ]
+            }
+        ]
+
+    },    {
+        "name": {
+            "game_id": "totk",
+            "game": "The Legend of Zelda: Tears of the Kingdom",
+            "caption": "TOTK"
+        },
+        "route": "DJCarmichael",
+        "split_type": "linear",
+        "splits": [
+            {
+                "split_id": "",
+                "caption": "",
+                "splits": [ ]
+            }
+        ]
+
+    }
+]

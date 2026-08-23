@@ -1,12 +1,18 @@
 from __future__ import annotations
 
-from PySide6 import QtCore, QtGui, QtWidgets, QMainWindow
-from PySide6.QtCore import Qt, QUrl, Signal
+from PySide6 import QtCore, QtGui, QtWidgets #, QMainWindow
+from PySide6.QtWidgets import QSizePolicy
+from PySide6.QtCore import Qt, QUrl, Signal, QSize
+
+from functools import partial
+from pathlib import Path
+import os
 
 import typing
 import random
 
-from dv_MGHT.gui.lib import *
+import dv_MGHT
+from dv_MGHT.gui.lib import flow_layout, clickable_label
 from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
 
 class GameFlowLayout(flow_layout.FlowLayout):
@@ -15,8 +21,8 @@ class GameFlowLayout(flow_layout.FlowLayout):
         self._games: list[str] = []
 
     def invalidate(self):
-        super.invalidate()
-        self._games = [ items.game.name.id for items in self._item_list ]           
+        super().invalidate()
+        self._games = [ items.widget().game.name.id for items in self._item_list ]           
 
     def move_left(self, other: int | str | GameQtTile | DVmghtGame) -> None:
         if isinstance(other, int):
@@ -150,7 +156,7 @@ class GameFlowLayout(flow_layout.FlowLayout):
         self.invalidate()
 
 
-class GameQtTile(QtWidgets.QWidget):
+class GameQtTile(QtWidgets.QStackedWidget):
 
     def __init__(
         self,
@@ -158,50 +164,77 @@ class GameQtTile(QtWidgets.QWidget):
         parent,
         window
     ):
-        super.__init__(parent)
+        super().__init__(parent)
         self.game = game
         self._parent = parent
         self._window = window
 
         # Select Game Display and Buttons
+        self.setToolTip(self.game.name.caption) # self._window._options.game_caption(self.game))
+        self.setAccessibleName(self.game.accessible_name)
+        self.setSizePolicy(
+            QSizePolicy.Policy.MinimumExpanding,
+            QSizePolicy.Policy.MinimumExpanding
+            )
         self.tile = clickable_label.ClickableLabel(self)
-        self.tile.setToolTip(self._window._options.game_caption(self.game))
-        self.tile.setAccessibleName(self.game.accessible_name)
-        #--self.tile.setFixedSize(200, 150)
-        # Would need to happen before transformed into clickable if set size
+        self.setObjectName("GameQtTile_" + self.game.name.id)
+        self.setMinimumSize(46, 46)
 
-        self._hover_effect = QtWidgets.QGraphicsColorizeEffect(self.tile)
+        self._hover_effect = QtWidgets.QGraphicsColorizeEffect(self)
         self._hover_effect.setStrength(0.5)
+        self._hover_effect.setEnabled(False)
+        self.setGraphicsEffect(self._hover_effect)
         
         self.tile.clicked.connect(partial(self._window.set_selected_game, self.game))
         self.tile.entered.connect(partial(self._hover_effect.setEnabled, True))
         self.tile.left.connect(partial(self._hover_effect.setEnabled, False))
 
+        # Retry Indicator
+        self.retried_on_fail = QtWidgets.QLabel(self.tile)
+        self.retried_on_fail.setPixmap(QtGui.QPixmap(os.fspath(dv_MGHT.retry_icon_path())))
+        self.retried_on_fail.setScaledContents(True)
+        self.retried_on_fail.setFixedSize(20, 20)
+        # Uncertain if I want to use a graphic or use webstyle
+
         # Game Display Text
         self.caption = QtWidgets.QLabel(self.tile)
         self.caption.setText(self.game.name.caption)
-
-        # Retry Indicator
-        self.retried_on_fail = QtWidgets.QLabel(self.tile)
-        #--self.retried_on_fail.setPixmap(QtGui.QPixmap(os.fspath(image_path)))
-        # Uncertain if I want to use a graphic or use webstyle
+        self.caption.resize(self.caption.sizeHint())
+        self.caption.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self.caption.setStyleSheet("""QLabel {
+            background: none;
+            font: 24px bold;
+            border: 0px hidden;
+            text-align: center;
+        }""")
 
         # Counter
         self.counter = QtWidgets.QLabel(self.tile)
-        self.counter.setStyle("""
-            font-size: 5;
-            right: 5;
-            top: 0;
-            """)
+        self.counter.setStyleSheet(""" QLabel {
+                font-size: 5;
+                right: 5;
+                top: 0;
+                }""")
         self.counter.setText("A")
 
         self.update_status()
 
     def update_status(self):
-        self.tile.setStyle(self.game.status.background_style)
-        self.retried_on_fail.setVisible(self.game.status.is_retry)
-        if self._window._options.display_counter:
+        print(self.objectName())
+        print(self.game.background_style)
+        self.setStyleSheet(self.game.background_style)
+        #self.retried_on_fail.setVisible(self.game.status.is_retry)
+        self.caption.resize(self.caption.sizeHint() + QSize(10, 0))
+        if False: #self._window._options.display_counter:
             self.counter.setVisible(True)
             self.counter.setText(self.game.personal_best_text)
+            self.tile.setMinimumSize(self.caption.sizeHint() + QSize(20, 10))
+            self.setMinimumSize(self.caption.sizeHint() + QSize(20, 10))
         else:
             self.counter.setVisible(False)
+            self.tile.setMinimumSize(self.caption.sizeHint() + QSize(10, 10))
+            self.setMinimumSize(self.caption.sizeHint() + QSize(10, 10))
+        self.retried_on_fail.move(
+            0,
+            self.tile.height()-self.retried_on_fail.height()
+        )
