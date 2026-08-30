@@ -15,42 +15,41 @@ from dv_MGHT.gui.lib import qt_mght as dv_qt
 from dv_MGHT.gui.gen.ui_content_window import Ui_ContentWindow
 from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
 
+# from dv_MGHT import VERSION
+VERSION = 1
+
 class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
     options_changed_signal = Signal()
 
     def __init__(
         self,
         options: Options,
-        selectedPackage: DVmghtPackage
+        selectedPackage: DVmghtPackage | None = None
     ):
         super().__init__()
         self.setupUi(self)
 
-        # from dv_MGHT import VERSION
-        VERSION = 1
-
         self._options = options
 
-        self._selected_package = selectedPackage
-        self.setWindowTitle(
-            "dv_MGHT {} ({})".format(VERSION, self._selected_package.name)
-        )
+        self._selected_package: DVmghtPackage | None = None
+
+        self.display_flow_layout = dv_qt.GameFlowLayout(self.gameDisplayWidget, True)
+        self.display_flow_layout.setSpacing(15)
+        self.display_flow_layout.setAlignment(Qt.AlignHCenter)
+
         self._display_game_elements: dict[DVmghtGame, dv_qt.GameQtTile] = {}
+
+        if selectedPackage:
+            self._load_package(selectedPackage)
+        else:
+            self.setWindowTitle("dv_MGHT {}".format(VERSION))
+
         self._current_game: DVmghtGame = None
         self._selected_game: DVmghtGame = None
         self._show_game_options(False)
 
         # Signals
         self.options_changed_signal.connect(self.on_options_changed)
-
-        self.display_flow_layout = dv_qt.GameFlowLayout(self.gameDisplayWidget, True)
-        self.display_flow_layout.setSpacing(15)
-        self.display_flow_layout.setAlignment(Qt.AlignHCenter)
-
-        for game in self._selected_package.games:
-            this_game_tile = dv_qt.GameQtTile(game, self.gameDisplayWidget, self)
-            self.display_flow_layout.addWidget(this_game_tile)
-            self._display_game_elements[game] = this_game_tile
 
         # On Click
         self.gameSetCurrent.clicked.connect(partial(self.set_selected_game_current))
@@ -64,7 +63,23 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.menu_action_display_counter.setChecked(self._options.display_counter)
         self.update_status_display_full()
 
+    # Package
+    # Reaction events
+    def _load_package(self, selectedPackage: DVmghtPackage):
+        if self._selected_package != None:
+            for game in self._selected_package.games:
+                del self._display_game_elements[game]
+        self._selected_package = selectedPackage
+        self.setWindowTitle(
+            "dv_MGHT {} ({})".format(VERSION, self._selected_package.name)
+        )
 
+        for game in self._selected_package.games:
+            this_game_tile = dv_qt.GameQtTile(game, self.gameDisplayWidget, self)
+            self.display_flow_layout.addWidget(this_game_tile)
+            self._display_game_elements[game] = this_game_tile
+
+    # Game
     # Reaction events
     def update_status_full(self):
         self.update_status_display()

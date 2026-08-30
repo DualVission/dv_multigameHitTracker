@@ -115,6 +115,8 @@ class FlowLayout(QLayout):
         rows: list[tuple[list[QWidgetItem], int, int]] = []
 
         row = []
+        if len(self._item_list) < 1:
+            return 0
         for item in self._item_list:
             style = item.widget().style()
             layout_spacing_x = style.layoutSpacing(QSizePolicy.PushButton, QSizePolicy.PushButton, Qt.Horizontal)
