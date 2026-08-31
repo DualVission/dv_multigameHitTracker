@@ -75,7 +75,7 @@ class GameFlowLayout(flow_layout.FlowLayout):
             print("{} already in far right.".format(other))
             return
         item = self.takeAt(old_index)
-        self.insertItem(old_index, item) # No need to add 1, as old item to right is now old_index
+        self.insertItem(old_index + 1, item)
         self.invalidate()
 
     def move_far_right(self, other: int | str | GameQtTile | DVmghtGame) -> None:
@@ -191,10 +191,11 @@ class GameQtTile(QtWidgets.QStackedWidget):
 
         # Retry Indicator
         self.retried_on_fail = QtWidgets.QLabel(self.tile)
-        self.retried_on_fail.setPixmap(QtGui.QPixmap(os.fspath(dv_MGHT.retry_icon_path())))
+        self.retried_on_fail.setPixmap(QtGui.QPixmap(os.fspath(
+            dv_MGHT.retry_img_path().joinpath("retry_icon.png")
+        )))
         self.retried_on_fail.setScaledContents(True)
         self.retried_on_fail.setFixedSize(20, 20)
-        # Uncertain if I want to use a graphic or use webstyle
 
         # Game Display Text
         self.caption = QtWidgets.QLabel(self.tile)
@@ -223,7 +224,7 @@ class GameQtTile(QtWidgets.QStackedWidget):
         print(self.objectName())
         print(self.game.background_style)
         self.setStyleSheet(self.game.background_style)
-        #self.retried_on_fail.setVisible(self.game.status.is_retry)
+        self.retried_on_fail.setVisible(self.game.status.is_retry)
         self.caption.resize(self.caption.sizeHint() + QSize(10, 0))
         if False: #self._window._options.display_counter:
             self.counter.setVisible(True)

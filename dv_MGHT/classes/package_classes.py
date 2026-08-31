@@ -40,13 +40,15 @@ class gameSplit():
         split_id: str,
         caption: str | None = None,
         splits: list = [],
-        pb: int = 0
+        pb: int = 0,
+        path: str | None = None
     ):
         self.id = split_id
         self.__caption = caption
         # TODO
         self.splits: list[dict] = []
         self.__pb = pb
+        self.__path = path
 
 
 
@@ -79,10 +81,10 @@ class DVmghtGame():
         def name(self):
             if self.is_forced and self.is_selected:
                 return "FORCE_FAILED"
-            elif self.is_failed and self.is_selected:
-                return "FAILED"
             elif self.is_success:
                 return "SUCCESS"
+            elif self.is_failed and self.is_selected:
+                return "FAILED"
             elif self.is_current:
                 return "CURRENT"
             elif self.is_selected:
@@ -127,7 +129,8 @@ class DVmghtGame():
             # or where retry is forced.
             # If additional things are added to the future,
             # It will need to be updated.
-            return self.__value.value > DVgameStatus.FAILED.value
+            fail_selected = DVgameStatus.FAILED | DVgameStatus.SELECTED
+            return self.__value.value > fail_selected.value
         @is_retry.setter
         def is_retry(self, other:bool):
             self.__set_bit(DVgameStatus.FORCE_FAILED, other)
@@ -169,7 +172,8 @@ class DVmghtGame():
         route: str | None = None,
         split_type: str | None = None,
         splits: list[dict | gameSplit] | None = None,
-        pb: int = 0
+        pb: int = 0,
+        path: str | None = None
     ):
         self.status = self.gameStatus()
         self.name = self.gameName(**name)
@@ -177,6 +181,7 @@ class DVmghtGame():
         self.splitType = split_type
         self.splits: list[gameSplit] = []
         self.__pb = pb
+        self.__path = path
 
         for new_split in splits or []:
             self.add_split(new_split)
@@ -255,17 +260,25 @@ class DVmghtGame():
         else:
             self.status.is_retry = not self.status.is_retry
 
+    def set_forced(self, other: bool | None = None) -> None:
+        if other != None:
+            self.status.is_forced = other
+        else:
+            self.status.is_forced = not self.status.is_forced
+
 # Class that contains and controls package contents
 class DVmghtPackage():
 
     class packageRepo():
         def __init__(
             self,
+            path: str,
             authors: list[str],
             link: str,
             source: str,
             license: str
         ):
+            self.path = path
             self.authors = authors
             self.link = link
             self.source = source
@@ -273,16 +286,21 @@ class DVmghtPackage():
 
     def __init__(
         self,
+        path: str,
         package: dict[str | bool | list[str]],
-        repository: dict[str | list[str]]
+        repository: dict[str | list[str]],
+        games: list[dict] | None = None
     ):
-        self.repository = self.packageRepo(**repository)
+        self.repository = self.packageRepo(path, **repository)
         self.name: str = package["name"]
         self.version: str = package["version"]
         self.id: str = package["package_id"]
         self._games: list[str] = package["games"]
         self.games: list[DVmghtGame] = []
         self._has_splits: bool = package["has_splits"]
+
+        if games != None:
+            self.load_games(games)
 
     def load_games(self, games_to_load: list[dict]):
         for raw_game in games_to_load:

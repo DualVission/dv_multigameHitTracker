@@ -13,6 +13,11 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QToolButton {
+	font-family: &quot;Segoe UI Symbol&quot;;
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -23,62 +28,156 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="gameOptionLayoutWidget">
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="gameSetLabel">
-        <property name="text">
-         <string>Set Game to</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="gameSetCurrent">
-        <property name="text">
-         <string>Current</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="gameSetSuccess">
-        <property name="text">
-         <string>Successful</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="gameSetFailed">
-        <property name="text">
-         <string>Failed</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
+     <widget class="QWidget" name="selectedGameLayoutWidget" native="true">
+      <layout class="QVBoxLayout" name="selectedGameLayout">
+       <item>
+        <widget class="QLabel" name="selectedGameLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="gameButtonsLayout">
+         <item>
+          <spacer name="preSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="gameStatusLayout">
+           <item>
+            <widget class="QLabel" name="gameStatusLabel">
+             <property name="text">
+              <string>Set to</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="gameStatus0CurrentButton">
+             <property name="text">
+              <string>Current</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="gameStatus1SuccessButton">
+             <property name="text">
+              <string>Successful</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="gameStatus2FailedButton">
+             <property name="text">
+              <string>Failed</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="gameStatus3ForcedFailedButton">
+             <property name="text">
+              <string>Force Retry</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="midSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="gamePositionLayout">
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="gamePositionLabel">
+             <property name="text">
+              <string>Move</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="gamePosition0FarLeftButton">
+             <property name="text">
+              <string>⏮</string>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonIconOnly</enum>
+             </property>
+             <property name="arrowType">
+              <enum>Qt::NoArrow</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="gamePosition1LeftButton">
+             <property name="text">
+              <string>⏴</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="gamePosition2RightButton">
+             <property name="text">
+              <string>⏵</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="gamePosition3FarRightButton">
+             <property name="text">
+              <string>⏭</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="postSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </item>
     <item>
      <widget class="QListWidget" name="splitDisplayWidget"/>
