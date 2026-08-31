@@ -47,6 +47,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self._current_game: DVmghtGame = None
         self._selected_game: DVmghtGame = None
         self._show_game_options(False)
+        self._show_order_options(True)
         self.gameStatus3ForcedFailedButton.setVisible(False)
 
         # Signals
@@ -66,6 +67,19 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.gamePosition2RightButton.clicked.connect(partial(self.move_selected_game_right))
         self.gamePosition3FarRightButton.clicked.connect(partial(self.move_selected_game_far_right))
 
+        ## Game Order
+        self.gameOrderTitleButton.clicked.connect(partial(self._show_order_options))
+        ### Shuffle All
+        self.gameOrderShuffleAllButton.clicked.connect(partial(self.shuffle_all))
+        self.gameOrderShuffleClearAllButton.clicked.connect(partial(self.shuffle_clear_all))
+        self.gameOrderClearAllButton.clicked.connect(partial(self.clear_all))
+        ### Shuffle After
+        self.gameOrderShuffleAfterButton.clicked.connect(partial(self.shuffle_after))
+        self.gameOrderShuffleClearAfterButton.clicked.connect(partial(self.shuffle_clear_after))
+        self.gameOrderClearAfterButton.clicked.connect(partial(self.clear_after))
+        ### Smart Shuffle
+        self.gameOrderSmartShuffleButton.clicked.connect(partial(self.smart_shuffle, True, False))
+        self.gameOrderSmartShuffleClearButton.clicked.connect(partial(self.smart_shuffle, True, True))
 
 
 
@@ -92,10 +106,10 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
 
     # Visual events
     def update_status_full(self):
-        self.update_status_display()
+        self.update_status_display_full()
         self._show_game_options(self._selected_game != None)
     def update_status_display_full(self):
-        for _, tile in self._display_game_elements:
+        for _, tile in self._display_game_elements.items():
             tile.update_status()
 
     def update_status_at(self, index):
@@ -112,7 +126,19 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
             game_text = "Select game"
         self.selectedGameLabel.setText(game_text)
         self.selectedGameLayoutWidget.setVisible(other)
+        self.gameOrderShuffleAfterButton.setEnabled(other)
+        self.gameOrderShuffleClearAfterButton.setEnabled(other)
+        self.gameOrderClearAfterButton.setEnabled(other)
 
+    def _show_order_options(self, other: bool | None = None):
+        if other == None:
+            other = not self.gameOrderOptionsLayoutWidget.isVisible()
+        if other:
+            self.gameOrderTitleButton.setArrowType(Qt.DownArrow)
+        else:
+            self.gameOrderTitleButton.setArrowType(Qt.LeftArrow)
+        self.gameOrderOptionsLayoutWidget.setVisible(other)
+        self.gameOrderLine.setVisible(not other)
 
     # Game Statuses
 
@@ -183,8 +209,49 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
 
     # Game Order
 
-    def randomize_order(self):
-        random.shuffle(self.display_flow_layout.contents._item_list)
+    ## Shuffle All
+    def shuffle_all(self):
+        self.display_flow_layout.shuffle_order()
+        self.update_status_display_full()
+
+    def shuffle_clear_all(self):
+        self.display_flow_layout.shuffle_order()
+        self.display_flow_layout.clear_status()
+        self.set_selected_game(self._selected_game)
+        self.update_status_display_full()
+
+    def clear_all(self):
+        self.display_flow_layout.clear_status()
+        self.set_selected_game(self._selected_game)
+        self.update_status_display_full()
+
+    ## Shuffle After
+    def shuffle_after(self):
+        if self._selected_game != None:
+            self.display_flow_layout.shuffle_order_after(self._selected_game)
+        self.update_status_display_full()
+
+    def shuffle_clear_after(self):
+        if self._selected_game != None:
+            self.display_flow_layout.shuffle_order_after(self._selected_game)
+            self.display_flow_layout.clear_status_after(self._selected_game)
+        self.update_status_display_full()
+
+    def clear_after(self):
+        if self._selected_game != None:
+            self.display_flow_layout.clear_status_after(self._selected_game)
+        self.update_status_display_full()
+
+    ## Smart Shuffle
+    def smart_shuffle(self, shuffle_failed: bool = True, clear_failed: bool = False):
+        if self._selected_game != None:
+            self.display_flow_layout.shift_success(
+                shuffle_failed,
+                clear_failed
+            )
+            if not self._selected_game.status.is_selected:
+                self.set_selected_game(self._selected_game)
+            self.update_status_display_full()
 
     ## Move Items
 

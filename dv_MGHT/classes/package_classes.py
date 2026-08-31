@@ -13,12 +13,15 @@ class DVgameStatus(Flag):
     FAILED       =  8 # red
     FORCE_FAILED = 16 # emblem
 
+    CLEAR        =  0
+
     @classmethod
-    def max(cls):
+    def max(cls) -> int:
         i = 0
         for member in cls:
             i += member.value
         return i
+
 
 class DVstatusColors(Enum):
     UPCOMING     = "#ccc" # silver
@@ -72,9 +75,10 @@ class DVmghtGame():
         def __init__(self):
             self.__value: DVgameStatus = DVgameStatus.UPCOMING
 
-        def set(self, other: int) -> None:
-            if other > DVgameStatus.max():
+        def set(self, other: DVgameStatus) -> None:
+            if other.value > DVgameStatus.max():
                 return
+            self.__value &= DVgameStatus.CLEAR
             self.__value = other
 
         @property
@@ -205,7 +209,10 @@ class DVmghtGame():
     def background_style(self) -> str:
         border_color = self.status
         if self.status.is_selected:
-            border_color = DVgameStatus.SELECTED
+            if self.status.is_success and self.status.is_current:
+                border_color = DVgameStatus.CURRENT
+            else:
+                border_color = DVgameStatus.SELECTED
         style_text = self.__style_text().format(
             bg=DVstatusColors.get_color_from_status(self.status),
             bd=DVstatusColors.get_color_from_status(border_color),

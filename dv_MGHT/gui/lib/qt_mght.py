@@ -13,7 +13,7 @@ import random
 
 import dv_MGHT
 from dv_MGHT.gui.lib import flow_layout, clickable_label
-from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
+from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame, DVgameStatus
 
 class GameFlowLayout(flow_layout.FlowLayout):
     def __init__(self, parent=None, center=False):
@@ -22,18 +22,40 @@ class GameFlowLayout(flow_layout.FlowLayout):
 
     def invalidate(self):
         super().invalidate()
-        self._games = [ items.widget().game.name.id for items in self._item_list ]           
+        self._games = [ items.widget().game.name.id for items in self._item_list ]
+
+    
+    def __get_old_index(self, other: int | str | GameQtTile | DVmghtGame | None) -> int:
+        if isinstance(other, int):
+            return other
+        elif isinstance(other, GameQtTile):
+            return self._item_list.index(other)
+        elif isinstance(other, DVmghtGame):
+            return self._games.index(other.name.id)
+        elif isinstance(other, str) and other in self._games:
+            return self._games.index(other)
+        else:
+            return None
+
+    def clear_status(self) -> None:
+        for widgetItem in self._item_list:
+            widgetItem.widget().game.status.set(DVgameStatus.UPCOMING)
+            widgetItem.widget().update()
+
+    def clear_status_after(self, other: int | str | GameQtTile | DVmghtGame) -> None:
+        old_index = self.__get_old_index(other)
+        if old_index == None:
+            return
+        if old_index > (self.count() - 2):
+            print("{} in far right.".format(other))
+            return
+        for widgetItem in self._item_list[old_index + 1:]:
+            widgetItem.widget().game.status.set(DVgameStatus.UPCOMING)
+            widgetItem.widget().update()
 
     def move_left(self, other: int | str | GameQtTile | DVmghtGame) -> None:
-        if isinstance(other, int):
-            old_index = other
-        elif isinstance(other, GameQtTile):
-            old_index = self._item_list.index(other)
-        elif isinstance(other, DVmghtGame):
-            old_index = self._games.index(other.name.id)
-        elif isinstance(other, str) and other in self._games:
-            old_index = self._games.index(other)
-        else:
+        old_index = self.__get_old_index(other)
+        if old_index == None:
             return
         if old_index <= 0:
             print("{} already in far left.".format(other))
@@ -43,15 +65,8 @@ class GameFlowLayout(flow_layout.FlowLayout):
         self.invalidate()
 
     def move_far_left(self, other: int | str | GameQtTile | DVmghtGame) -> None:
-        if isinstance(other, int):
-            old_index = other
-        elif isinstance(other, GameQtTile):
-            old_index = self._item_list.index(other)
-        elif isinstance(other, DVmghtGame):
-            old_index = self._games.index(other.name.id)
-        elif isinstance(other, str) and other in self._games:
-            old_index = self._games.index(other)
-        else:
+        old_index = self.__get_old_index(other)
+        if old_index == None:
             return
         if old_index <= 0:
             print("{} already in far left.".format(other))
@@ -61,15 +76,8 @@ class GameFlowLayout(flow_layout.FlowLayout):
         self.invalidate()
 
     def move_right(self, other: int | str | GameQtTile | DVmghtGame) -> None:
-        if isinstance(other, int):
-            old_index = other
-        elif isinstance(other, GameQtTile):
-            old_index = self._item_list.index(other)
-        elif isinstance(other, DVmghtGame):
-            old_index = self._games.index(other.name.id)
-        elif other in self._games:
-            old_index = self._games.index(other)
-        else:
+        old_index = self.__get_old_index(other)
+        if old_index == None:
             return
         if old_index >= (self.count() - 1):
             print("{} already in far right.".format(other))
@@ -79,15 +87,8 @@ class GameFlowLayout(flow_layout.FlowLayout):
         self.invalidate()
 
     def move_far_right(self, other: int | str | GameQtTile | DVmghtGame) -> None:
-        if isinstance(other, int):
-            old_index = other
-        elif isinstance(other, GameQtTile):
-            old_index = self._item_list.index(other)
-        elif isinstance(other, DVmghtGame):
-            old_index = self._games.index(other.name.id)
-        elif other in self._games:
-            old_index = self._games.index(other)
-        else:
+        old_index = self.__get_old_index(other)
+        if old_index == None:
             return
         if old_index >= (self.count() - 1):
             print("{} already in far right.".format(other))
@@ -126,20 +127,36 @@ class GameFlowLayout(flow_layout.FlowLayout):
         new_order[index:] = trail
         self._set_order(new_order)
 
-    def shift_success(self, shuffle_failed: bool = True) -> None:
+    def shuffle_order_after(self, other: int | str | GameQtTile | DVmghtGame) -> None:
+        old_index = self.__get_old_index(other)
+        if old_index == None:
+            return
+        if old_index > (self.count() - 2):
+            print("{} in far right.".format(other))
+            return
+        self.shuffle_order_from(old_index + 1)
+
+    def shift_success(self, shuffle_failed: bool = True, clear_failed: bool = False) -> None:
         current_chain = -1
         for i in range(len(self._item_list)-1,-1,-1):
-            this_game = self._item_list[i].game
-            if this_game.is_failed and not this_game.is_retry:
+            this_game = self._item_list[i].widget().game
+            if not this_game.status.is_success:
                 current_chain = i + 1
                 break
-        if current_chain == len(self._item_list): # when all games failed, halt execution
+            elif this_game.status.is_retry:
+                current_chain = i
+                break
+        if current_chain >= len(self._item_list) or current_chain <= 0: # when all games failed, halt execution
+            if clear_failed:
+                self.clear_status()
             if shuffle_failed:
                 self.shuffle_order()
             return
-        
         header = [ *range(current_chain, len(self._item_list)) ]
         trail = [ *range(current_chain) ]
+        if clear_failed:
+            for widgetItem in self._item_list[:current_chain]:
+                widgetItem.widget().game.status.set(DVgameStatus.UPCOMING)
         if shuffle_failed:
             random.shuffle(trail)
         new_order = header + trail
@@ -221,8 +238,6 @@ class GameQtTile(QtWidgets.QStackedWidget):
         self.update_status()
 
     def update_status(self):
-        print(self.objectName())
-        print(self.game.background_style)
         self.setStyleSheet(self.game.background_style)
         self.retried_on_fail.setVisible(self.game.status.is_retry)
         self.caption.resize(self.caption.sizeHint() + QSize(10, 0))

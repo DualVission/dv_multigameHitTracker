@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
+    <width>767</width>
     <height>640</height>
    </rect>
   </property>
@@ -60,7 +60,7 @@
            <item>
             <widget class="QLabel" name="gameStatusLabel">
              <property name="text">
-              <string>Set to</string>
+              <string>Set Status to</string>
              </property>
             </widget>
            </item>
@@ -100,7 +100,7 @@
             <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::Maximum</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -112,12 +112,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="gamePositionLayout">
-           <property name="leftMargin">
-            <number>5</number>
-           </property>
-           <property name="rightMargin">
-            <number>5</number>
-           </property>
            <item>
             <widget class="QLabel" name="gamePositionLabel">
              <property name="text">
@@ -180,6 +174,156 @@
      </widget>
     </item>
     <item>
+     <layout class="QVBoxLayout" name="gameOrderLayout">
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="gameOrderTitleLayout">
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <spacer name="postspacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="gameOrderTitleLabel">
+          <property name="text">
+           <string>Randomize Order</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="gameOrderTitleButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonIconOnly</enum>
+          </property>
+          <property name="arrowType">
+           <enum>Qt::DownArrow</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="prespacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="gameOrderLine">
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="gameOrderOptionsLayoutWidget" native="true">
+        <layout class="QGridLayout" name="gameOrderOptionsLayout">
+         <item row="0" column="0">
+          <widget class="QPushButton" name="gameOrderShuffleAllButton">
+           <property name="text">
+            <string>Shuffle All</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="gameOrderShuffleAfterButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Shuffle after Selected</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="gameOrderShuffleClearAllButton">
+           <property name="text">
+            <string>Clear Status And Shuffle All</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QPushButton" name="gameOrderSmartShuffleButton">
+           <property name="text">
+            <string>Shift Success Chain Left</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="gameOrderShuffleClearAfterButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Clear Status And Shuffle After Selected</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="gameOrderSmartShuffleClearButton">
+           <property name="text">
+            <string>Shift Success Chain And Clear Status</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="gameOrderClearAllButton">
+           <property name="text">
+            <string>Clear All Status</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="gameOrderClearAfterButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Clear Status After Selected</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <widget class="QListWidget" name="splitDisplayWidget"/>
     </item>
    </layout>
@@ -189,7 +333,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>820</width>
+     <width>767</width>
      <height>22</height>
     </rect>
    </property>
@@ -197,11 +341,37 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionLoadPackage"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionLoadPackage">
+   <property name="text">
+    <string>Load Package...</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>gameStatus0CurrentButton</tabstop>
+  <tabstop>gameStatus1SuccessButton</tabstop>
+  <tabstop>gameStatus2FailedButton</tabstop>
+  <tabstop>gameStatus3ForcedFailedButton</tabstop>
+  <tabstop>gamePosition0FarLeftButton</tabstop>
+  <tabstop>gamePosition1LeftButton</tabstop>
+  <tabstop>gamePosition2RightButton</tabstop>
+  <tabstop>gamePosition3FarRightButton</tabstop>
+  <tabstop>gameOrderTitleButton</tabstop>
+  <tabstop>gameOrderShuffleAllButton</tabstop>
+  <tabstop>gameOrderShuffleAfterButton</tabstop>
+  <tabstop>gameOrderSmartShuffleButton</tabstop>
+  <tabstop>gameOrderShuffleClearAllButton</tabstop>
+  <tabstop>gameOrderShuffleClearAfterButton</tabstop>
+  <tabstop>gameOrderSmartShuffleClearButton</tabstop>
+  <tabstop>gameOrderClearAllButton</tabstop>
+  <tabstop>gameOrderClearAfterButton</tabstop>
+  <tabstop>splitDisplayWidget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
