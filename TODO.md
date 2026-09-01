@@ -1,6 +1,7 @@
 README.md:
   - [ ] End User explanation
   - [ ] Package Creator (own document?)
+
 Classes:
 - Package Classes:
   - DVmghtSplit:
@@ -8,6 +9,7 @@ Classes:
     - [ ] TODO
   - DVmghtGame:
     - [ ] Update PB to reflect multiple hit types
+
 Interface:
 - State Loading:
   - [ ] User PB loading
@@ -20,6 +22,7 @@ Interface:
     - [ ] TODO
 - Image Handling:
   - [ ] TODO
+
 Asset:
 - Images:
   - Hit Type Icons:
@@ -29,6 +32,7 @@ Asset:
     - [ ] Bomb/Explosion
     - [ ] Sunshine/Storm Clouds
     - [ ] Balloon Pop
+    
 GUI:
 - Content Window:
   - [ ] TODO
