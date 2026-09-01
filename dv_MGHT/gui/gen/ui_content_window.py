@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'content_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.3
+## Created by: Qt User Interface Compiler version 6.11.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -32,13 +32,26 @@ class Ui_ContentWindow(object):
 "}")
         self.actionLoadPackage = QAction(ContentWindow)
         self.actionLoadPackage.setObjectName(u"actionLoadPackage")
+        self.actionDarkMode = QAction(ContentWindow)
+        self.actionDarkMode.setObjectName(u"actionDarkMode")
+        self.actionDarkMode.setCheckable(True)
+        self.actionDarkMode.setChecked(True)
+        self.actionDisplayCounters = QAction(ContentWindow)
+        self.actionDisplayCounters.setObjectName(u"actionDisplayCounters")
+        self.actionDisplayCounters.setCheckable(True)
+        self.actionRandomizeOrderOpenOnStartup = QAction(ContentWindow)
+        self.actionRandomizeOrderOpenOnStartup.setObjectName(u"actionRandomizeOrderOpenOnStartup")
+        self.actionRandomizeOrderOpenOnStartup.setCheckable(True)
+        self.actionRandomizeOrderOpenOnStartup.setChecked(True)
         self.centralwidget = QWidget(ContentWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.gameDisplayWidget = QWidget(self.centralwidget)
         self.gameDisplayWidget.setObjectName(u"gameDisplayWidget")
-        self.gameDisplayWidget.setContextMenuPolicy(Qt.NoContextMenu)
+        self.gameDisplayWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
+        self.gameDisplayWidget.setStyleSheet(u"QStackedWidget {\n"
+"}")
 
         self.verticalLayout.addWidget(self.gameDisplayWidget)
 
@@ -48,7 +61,7 @@ class Ui_ContentWindow(object):
         self.selectedGameLayout.setObjectName(u"selectedGameLayout")
         self.selectedGameLabel = QLabel(self.selectedGameLayoutWidget)
         self.selectedGameLabel.setObjectName(u"selectedGameLabel")
-        self.selectedGameLabel.setAlignment(Qt.AlignCenter)
+        self.selectedGameLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.selectedGameLayout.addWidget(self.selectedGameLabel)
 
@@ -101,8 +114,8 @@ class Ui_ContentWindow(object):
 
         self.gamePosition0FarLeftButton = QToolButton(self.selectedGameLayoutWidget)
         self.gamePosition0FarLeftButton.setObjectName(u"gamePosition0FarLeftButton")
-        self.gamePosition0FarLeftButton.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        self.gamePosition0FarLeftButton.setArrowType(Qt.NoArrow)
+        self.gamePosition0FarLeftButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+        self.gamePosition0FarLeftButton.setArrowType(Qt.ArrowType.NoArrow)
 
         self.gamePositionLayout.addWidget(self.gamePosition0FarLeftButton)
 
@@ -151,8 +164,8 @@ class Ui_ContentWindow(object):
 
         self.gameOrderTitleButton = QToolButton(self.centralwidget)
         self.gameOrderTitleButton.setObjectName(u"gameOrderTitleButton")
-        self.gameOrderTitleButton.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        self.gameOrderTitleButton.setArrowType(Qt.DownArrow)
+        self.gameOrderTitleButton.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+        self.gameOrderTitleButton.setArrowType(Qt.ArrowType.DownArrow)
 
         self.gameOrderTitleLayout.addWidget(self.gameOrderTitleButton)
 
@@ -165,8 +178,8 @@ class Ui_ContentWindow(object):
 
         self.gameOrderLine = QFrame(self.centralwidget)
         self.gameOrderLine.setObjectName(u"gameOrderLine")
-        self.gameOrderLine.setFrameShadow(QFrame.Raised)
-        self.gameOrderLine.setFrameShape(QFrame.HLine)
+        self.gameOrderLine.setFrameShadow(QFrame.Shadow.Raised)
+        self.gameOrderLine.setFrameShape(QFrame.Shape.HLine)
 
         self.gameOrderLayout.addWidget(self.gameOrderLine)
 
@@ -231,9 +244,11 @@ class Ui_ContentWindow(object):
         ContentWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(ContentWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 767, 22))
+        self.menubar.setGeometry(QRect(0, 0, 767, 33))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
+        self.menuOptions = QMenu(self.menubar)
+        self.menuOptions.setObjectName(u"menuOptions")
         ContentWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(ContentWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -257,7 +272,11 @@ class Ui_ContentWindow(object):
         QWidget.setTabOrder(self.gameOrderClearAfterButton, self.splitDisplayWidget)
 
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuOptions.menuAction())
         self.menuFile.addAction(self.actionLoadPackage)
+        self.menuOptions.addAction(self.actionDarkMode)
+        self.menuOptions.addAction(self.actionDisplayCounters)
+        self.menuOptions.addAction(self.actionRandomizeOrderOpenOnStartup)
 
         self.retranslateUi(ContentWindow)
 
@@ -267,6 +286,9 @@ class Ui_ContentWindow(object):
     def retranslateUi(self, ContentWindow):
         ContentWindow.setWindowTitle(QCoreApplication.translate("ContentWindow", u"MainWindow", None))
         self.actionLoadPackage.setText(QCoreApplication.translate("ContentWindow", u"Load Package...", None))
+        self.actionDarkMode.setText(QCoreApplication.translate("ContentWindow", u"Dark Mode", None))
+        self.actionDisplayCounters.setText(QCoreApplication.translate("ContentWindow", u"Display Counters", None))
+        self.actionRandomizeOrderOpenOnStartup.setText(QCoreApplication.translate("ContentWindow", u"Randomize Order Open on Startup", None))
         self.selectedGameLabel.setText(QCoreApplication.translate("ContentWindow", u"TextLabel", None))
         self.gameStatusLabel.setText(QCoreApplication.translate("ContentWindow", u"Set Status to", None))
         self.gameStatus0CurrentButton.setText(QCoreApplication.translate("ContentWindow", u"Current", None))
@@ -289,5 +311,6 @@ class Ui_ContentWindow(object):
         self.gameOrderClearAllButton.setText(QCoreApplication.translate("ContentWindow", u"Clear All Status", None))
         self.gameOrderClearAfterButton.setText(QCoreApplication.translate("ContentWindow", u"Clear Status After Selected", None))
         self.menuFile.setTitle(QCoreApplication.translate("ContentWindow", u"File", None))
+        self.menuOptions.setTitle(QCoreApplication.translate("ContentWindow", u"Options", None))
     # retranslateUi
 

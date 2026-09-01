@@ -11,12 +11,14 @@ class NDISender():
         self,
         widget: QWidget,
         interval: int | None = None,
-        framerate: int | None = None
+        framerate: int | None = None,
+        stream_name: str = "Games Board"
     ):
         self._widget = widget
         self._widget.adjustSize()
+        # For some reason, if you don't initialize it like this, it breaks down
         self._widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        
+
         self._timer = QtCore.QTimer()
         self._interval: int # Interval between frame updates
 
@@ -31,7 +33,7 @@ class NDISender():
             raise RuntimeError("NDI failed to initialize.")
 
         self.settings = ndi.SendCreate()
-        self.settings.ndi_name = "dv_MGHT Games Board"
+        self.settings.ndi_name = "dv_MGHT ".format(stream_name)
 
         self.sender = ndi.send_create(self.settings)
 

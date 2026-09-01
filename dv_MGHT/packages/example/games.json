@@ -11,6 +11,7 @@
             {
                 "split_id": "",
                 "caption": "",
+                "selectable": true,
                 "splits": [ ]
             }
         ]

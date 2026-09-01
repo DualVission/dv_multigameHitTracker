@@ -1,5 +1,6 @@
 {
-	"display_counter": false,
-	"use_tile_img": false,
-	"default_split_type": "linear"
+    "display_counter": false,
+    "use_tile_img": false,
+    "default_split_type": "linear",
+    "number_of_hits": 1
 }

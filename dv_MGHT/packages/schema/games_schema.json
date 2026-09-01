@@ -63,6 +63,11 @@
                                 ""
                             ]
                         },
+                        "selectable": {
+                            "description": "This determines if this split is selectable or display only.",
+                            "type": "bool",
+                            "default": true
+                        },
                         "caption": {
                             "description": "This is the default caption used in dv_MGHT.",
                             "type": "string",

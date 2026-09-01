@@ -209,39 +209,37 @@ class GameQtTile(QtWidgets.QStackedWidget):
         # Retry Indicator
         self.retried_on_fail = QtWidgets.QLabel(self.tile)
         self.retried_on_fail.setPixmap(QtGui.QPixmap(os.fspath(
-            dv_MGHT.retry_img_path().joinpath("retry_icon.png")
+            dv_MGHT.get_img_path().joinpath("retry_icon.png")
         )))
         self.retried_on_fail.setScaledContents(True)
         self.retried_on_fail.setFixedSize(20, 20)
+        self.retried_on_fail.setStyleSheet(""" QLabel { border: 0px hidden; }""")
 
         # Game Display Text
         self.caption = QtWidgets.QLabel(self.tile)
         self.caption.setText(self.game.name.caption)
         self.caption.resize(self.caption.sizeHint())
         self.caption.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.caption.setStyleSheet("""QLabel {
-            background: none;
-            font: 24px bold;
-            border: 0px hidden;
-            text-align: center;
-        }""")
 
         # Counter
         self.counter = QtWidgets.QLabel(self.tile)
         self.counter.setStyleSheet(""" QLabel {
-                font-size: 5;
-                right: 5;
-                top: 0;
-                }""")
+            font-size: 5;
+            right: 5;
+            top: 0;
+            border: 0px hidden;
+        }""")
         self.counter.setText("A")
 
         self.update_status()
 
     def update_status(self):
         self.setStyleSheet(self.game.background_style)
+        self.caption.setStyleSheet(self.game.caption_style)
         self.retried_on_fail.setVisible(self.game.status.is_retry)
+        self.setAccessibleName(self.game.accessible_name)
         self.caption.resize(self.caption.sizeHint() + QSize(10, 0))
-        if False: #self._window._options.display_counter:
+        if self._window._selected_package.settings.display_counter:
             self.counter.setVisible(True)
             self.counter.setText(self.game.personal_best_text)
             self.tile.setMinimumSize(self.caption.sizeHint() + QSize(20, 10))

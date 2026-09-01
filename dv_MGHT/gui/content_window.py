@@ -6,14 +6,18 @@ from PySide6.QtCore import Qt, QUrl, Signal
 from functools import partial
 from pathlib import Path
 import os
+import glob
 
 import typing
 import random
 
 import dv_MGHT
+from dv_MGHT.interface.options import Options
 from dv_MGHT.gui.lib import qt_mght as dv_qt
+from dv_MGHT.gui.lib import theme
 from dv_MGHT.gui.gen.ui_content_window import Ui_ContentWindow
 from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
+from dv_MGHT.classes.json_tools import package_from_json
 
 # from dv_MGHT import VERSION
 VERSION = 1
@@ -29,10 +33,17 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self._options = options
+        self.menuLoadPackage = QtWidgets.QMenu(self)
+        self.actionLoadPackage.setMenu(self.menuLoadPackage)
+
+        self._loaded_packages: list[DVmghtPackage] = []
+        self._loaded_packages_actions: list[QtGui.QAction] = []
+        self._get_packages()
 
         self._selected_package: DVmghtPackage | None = None
+        self._options: Options
 
+        self.gameDisplayWidget.setPalette(QtGui.QPalette())
         self.display_flow_layout = dv_qt.GameFlowLayout(self.gameDisplayWidget, True)
         self.display_flow_layout.setSpacing(15)
         self.display_flow_layout.setAlignment(Qt.AlignHCenter)
@@ -47,7 +58,6 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self._current_game: DVmghtGame = None
         self._selected_game: DVmghtGame = None
         self._show_game_options(False)
-        self._show_order_options(True)
         self.gameStatus3ForcedFailedButton.setVisible(False)
 
         # Signals
@@ -81,12 +91,39 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.gameOrderSmartShuffleButton.clicked.connect(partial(self.smart_shuffle, True, False))
         self.gameOrderSmartShuffleClearButton.clicked.connect(partial(self.smart_shuffle, True, True))
 
+        # Action
+        ## File
+        ## Options
+        self.actionDarkMode.triggered.connect(self._on_menu_action_dark_mode)
+        self.actionDisplayCounters.triggered.connect(self._on_menu_action_display_counter)
+        self.actionRandomizeOrderOpenOnStartup.triggered.connect(self._on_menu_open_shuffle)
+
+        options.on_options_changed = self.options_changed_signal.emit
+        options.load_from_disk()
+        self._options = options
+        self._show_order_options(self._options.open_shuffle)
+        self.on_options_changed()
 
 
     # Options
     def on_options_changed(self):
-        self.menu_action_display_counter.setChecked(self._options.display_counter)
+        self.actionDarkMode.setChecked(self._options.dark_mode)
+        self.actionDisplayCounters.setChecked(self._options.display_counter)
+        self.actionRandomizeOrderOpenOnStartup.setChecked(self._options.open_shuffle)
+        theme.set_dark_theme(self._options.dark_mode, self)
         self.update_status_display_full()
+    ## Dark Mode
+    def _on_menu_action_dark_mode(self):
+        with self._options as options:
+            options.dark_mode = self.actionDarkMode.isChecked()
+    ## Display Counter
+    def _on_menu_action_display_counter(self):
+        with self._options as options:
+            options.display_counter = self.actionDisplayCounters.isChecked()
+    ## Open Shuffle
+    def _on_menu_open_shuffle(self):
+        with self._options as options:
+            options.open_shuffle = self.actionRandomizeOrderOpenOnStartup.isChecked()
 
     # Package
     # Reaction events
@@ -111,6 +148,10 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
     def update_status_display_full(self):
         for _, tile in self._display_game_elements.items():
             tile.update_status()
+            tile.retried_on_fail.setVisible(
+                self._selected_package.settings.display_counter
+                and self._options.display_counter
+            )
 
     def update_status_at(self, index):
         self.update_status_display_at(index)
@@ -139,6 +180,44 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
             self.gameOrderTitleButton.setArrowType(Qt.LeftArrow)
         self.gameOrderOptionsLayoutWidget.setVisible(other)
         self.gameOrderLine.setVisible(not other)
+
+    def _get_packages(self):
+        package_names = []
+        package_paths_internal_raw = glob.glob(os.fspath(
+            dv_MGHT.get_package_base_path().joinpath(
+                "*",
+                "manifest.json"
+            )
+        ))
+        package_paths_external_raw = glob.glob(os.fspath(
+            dv_MGHT.get_local_data_path().joinpath(
+                "packages",
+                "*",
+                "manifest.json"
+            )
+        ))
+        package_paths = [
+            Path(path).parent for path in [
+                *package_paths_internal_raw,
+                *package_paths_external_raw
+            ] if Path(path).parent.parts[-1] != "example"
+        ]
+
+        for package_path in package_paths:
+            self._loaded_packages.append(package_from_json(package_path))
+
+        self._loaded_packages.sort(key=lambda package: package.name)
+        for package in self._loaded_packages:
+            thisAction = QtGui.QAction(self)
+            thisAction.setText(package.name)
+            thisToolTip = [
+                "Authors: " + ", ".join(package.repository.authors),
+                "Games: " + ", ".join(package._games)
+            ]
+            thisAction.setToolTip("\n".join(thisToolTip))
+            thisAction.triggered.connect(partial(self._load_package, package))
+            self._loaded_packages_actions.append(thisAction)
+            self.menuLoadPackage.addAction(thisAction)
 
     # Game Statuses
 

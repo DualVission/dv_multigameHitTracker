@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum, Flag, auto
-import json
+# import json
 
 # TODO
 
@@ -31,27 +31,36 @@ class DVstatusColors(Enum):
     FAILED       = "#d21" # red
     FORCE_FAILED = "#f0f" # emblem
 
+    CLEAR        = UPCOMING
+
     @classmethod
     def get_color_from_status(cls, check_status: DVgameStatus):
         if check_status.name in cls.__members__:
             return cls.__members__[check_status.name].value
 
 # Class that contains split information, needs to be separate from games
-class gameSplit():
+class DVmghtSplit():
     def __init__(
         self,
         split_id: str,
         caption: str | None = None,
         splits: list = [],
         pb: int = 0,
-        path: str | None = None
+        path: str | None = None,
+        selectable: bool | None = True,
+        **kwargs
     ):
         self.id = split_id
         self.__caption = caption
         # TODO
         self.splits: list[dict] = []
+        self.selectable = selectable
         self.__pb = pb
         self.__path = path
+        self.__future_proof: dict = {**kwargs}
+
+        for split in splits:
+            self.add_split(split)
 
 
 
@@ -62,11 +71,11 @@ class gameSplit():
             resultSum += split.personal_best
         return resultSum
 
-    def add_split(self, other: dict | gameSplit) -> None:
-        if isinstance(other, gameSplit):
+    def add_split(self, other: dict | DVmghtSplit) -> None:
+        if isinstance(other, DVmghtSplit):
             self.splits.append(other)
             return
-        self.splits.append(gameSplit(**other))
+        self.splits.append(DVmghtSplit(**other))
 
 
 # Class that contains and controls game contents
@@ -97,7 +106,27 @@ class DVmghtGame():
                 return "FAILED"
             else:
                 return "UPCOMING"
-        
+
+        @property
+        def accessible_name(self):
+            outputS = []
+            if self.is_current:
+                outputS.append("current")
+            if self.is_selected:
+                outputS.append("selected")
+            if self.is_retry:
+                outputS.append("being retried")
+            if self.is_success:
+                outputS.append("successful")
+            if self.is_failed and not self.is_retry:
+                outputS.append("successful")
+            if len(outputS) >= 0:
+                outputS.append("upcoming")
+            if len(outputS) == 1:
+                return  outputS[0]
+            elif len(outputS) == 2:
+                return " and ".join(outputS)
+            return ", ".join(outputS[:-1]) + ", and " + outputS[-1]
 
         @property
         def is_selected(self) -> bool:
@@ -175,20 +204,25 @@ class DVmghtGame():
         name: dict[str],
         route: str | None = None,
         split_type: str | None = None,
-        splits: list[dict | gameSplit] | None = None,
+        splits: list[dict | DVmghtSplit] | None = None,
         pb: int = 0,
-        path: str | None = None
+        path: str | None = None,
+        **kwargs
     ):
         self.status = self.gameStatus()
         self.name = self.gameName(**name)
         self.route = route
         self.splitType = split_type
-        self.splits: list[gameSplit] = []
+        self.splits: list[DVmghtSplit] = []
         self.__pb = pb
         self.__path = path
+        self.__future_proof = {**kwargs}
 
         for new_split in splits or []:
             self.add_split(new_split)
+
+    def __str__(self):
+        return self.name.game
 
     @property
     def personal_best(self):
@@ -203,7 +237,27 @@ class DVmghtGame():
 
     @property
     def accessible_name(self) -> str:
-        return "{name} is {status}".format(name=self.name.game, status="")
+        return "{name} is {status}".format(
+            name=self.name.game,
+            status=self.status.accessible_name
+        )
+
+    @property
+    def caption_style(self) -> str:
+        style_text = self.__style_caption_text().format(
+            oc="{",
+            cc="}"
+        )
+        return style_text
+
+    def __style_caption_text(self) -> str:
+        return """QLabel {oc}
+            background: #00ffffff;
+            font: 24px bold;
+            color: #000;
+            border: 0px hidden;
+            text-align: center;
+        {cc}"""
 
     @property
     def background_style(self) -> str:
@@ -213,7 +267,7 @@ class DVmghtGame():
                 border_color = DVgameStatus.CURRENT
             else:
                 border_color = DVgameStatus.SELECTED
-        style_text = self.__style_text().format(
+        style_text = self.__style_background_text().format(
             bg=DVstatusColors.get_color_from_status(self.status),
             bd=DVstatusColors.get_color_from_status(border_color),
             oc="{",
@@ -222,19 +276,19 @@ class DVmghtGame():
         )
         return style_text
 
-    def __style_text(self) -> str:
-        return """QStackedWidget {oc}
-            background-color: {bg};
+    def __style_background_text(self) -> str:
+        return """QWidget QLabel {oc}
+            background: {bg};
             border: 2px solid {bd};
             border-radius: 1px;
             {cc}
         """
 
-    def add_split(self, other: dict | gameSplit) -> None:
-        if isinstance(other, gameSplit):
+    def add_split(self, other: dict | DVmghtSplit) -> None:
+        if isinstance(other, DVmghtSplit):
             self.splits.append(other)
             return
-        self.splits.append(gameSplit(**other))
+        self.splits.append(DVmghtSplit(**other))
 
     def set_selected(self, other: bool | None = None) -> None:
         if other != None:
@@ -291,20 +345,37 @@ class DVmghtPackage():
             self.source = source
             self.license = license
 
+    class packageSettings():
+        def __init__(
+            self,
+            display_counter: bool = False,
+            use_tile_img: bool = False,
+            default_split_type: str = "linear",
+            number_of_hits: int = 1
+        ):
+            self.display_counter = display_counter
+            self.use_tile_img = use_tile_img
+            self.default_split_type = default_split_type
+            self.number_of_hits = number_of_hits
+
     def __init__(
         self,
         path: str,
         package: dict[str | bool | list[str]],
         repository: dict[str | list[str]],
-        games: list[dict] | None = None
+        games: list[dict] | None = None,
+        settings: list[dict] | None = None,
+        **kwargs
     ):
-        self.repository = self.packageRepo(path, **repository)
+        self.repository = self.packageRepo(path=path, **repository)
+        self.settings = self.packageSettings(**settings)
         self.name: str = package["name"]
         self.version: str = package["version"]
         self.id: str = package["package_id"]
         self._games: list[str] = package["games"]
         self.games: list[DVmghtGame] = []
         self._has_splits: bool = package["has_splits"]
+        self.__future_proof = {**kwargs}
 
         if games != None:
             self.load_games(games)
