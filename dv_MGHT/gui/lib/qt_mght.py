@@ -179,12 +179,14 @@ class GameQtTile(QtWidgets.QStackedWidget):
         self,
         game: DVmghtGame,
         parent,
-        window
+        window,
+        size_mult: float = 1
     ):
         super().__init__(parent)
         self.game = game
         self._parent = parent
         self._window = window
+        self.__size_mult = size_mult
 
         # Select Game Display and Buttons
         self.setToolTip(self.game.name.caption) # self._window._options.game_caption(self.game))
@@ -212,7 +214,10 @@ class GameQtTile(QtWidgets.QStackedWidget):
             dv_MGHT.get_img_path().joinpath("retry_icon.png")
         )))
         self.retried_on_fail.setScaledContents(True)
-        self.retried_on_fail.setFixedSize(20, 20)
+        self.retried_on_fail.setFixedSize(
+            int(32 * self.__size_mult),
+            int(24 * self.__size_mult)
+        )
         self.retried_on_fail.setStyleSheet(""" QLabel { border: 0px hidden; }""")
 
         # Game Display Text
@@ -223,31 +228,49 @@ class GameQtTile(QtWidgets.QStackedWidget):
 
         # Counter
         self.counter = QtWidgets.QLabel(self.tile)
-        self.counter.setStyleSheet(""" QLabel {
-            font-size: 5;
-            right: 5;
-            top: 0;
+        self.counter.setStyleSheet(""" QLabel {oc}
+            font-size: {fs}px;
             border: 0px hidden;
-        }""")
+        {cc}""".format(
+            fs = 5 * self.__size_mult,
+            oc="{",
+            cc="}"
+        ))
         self.counter.setText("A")
 
         self.update_status()
 
     def update_status(self):
-        self.setStyleSheet(self.game.background_style)
-        self.caption.setStyleSheet(self.game.caption_style)
+        self.setStyleSheet(self.game.background_style(self.__size_mult))
+        self.caption.setStyleSheet(self.game.caption_style(self.__size_mult))
         self.retried_on_fail.setVisible(self.game.status.is_retry)
         self.setAccessibleName(self.game.accessible_name)
-        self.caption.resize(self.caption.sizeHint() + QSize(10, 0))
+        self.caption.resize(self.caption.sizeHint() + QSize(int(10* self.__size_mult), 0))
         if self._window._selected_package.settings.display_counter:
             self.counter.setVisible(True)
             self.counter.setText(self.game.personal_best_text)
-            self.tile.setMinimumSize(self.caption.sizeHint() + QSize(20, 10))
-            self.setMinimumSize(self.caption.sizeHint() + QSize(20, 10))
+            self.tile.setMinimumSize(
+                self.caption.sizeHint()
+                + QSize(int(20 * self.__size_mult), int(10 * self.__size_mult))
+            )
+            self.setMinimumSize(
+                self.caption.sizeHint()
+                + QSize(int(20 * self.__size_mult), int(10 * self.__size_mult))
+            )
+            self.counter.move(
+                self.tile.width()-self.counter.width() - int(5 * self.__size_mult),
+                0
+            )
         else:
             self.counter.setVisible(False)
-            self.tile.setMinimumSize(self.caption.sizeHint() + QSize(10, 10))
-            self.setMinimumSize(self.caption.sizeHint() + QSize(10, 10))
+            self.tile.setMinimumSize(
+                self.caption.sizeHint()
+                + QSize(int(10 * self.__size_mult), int(10 * self.__size_mult))
+            )
+            self.setMinimumSize(
+                self.caption.sizeHint()
+                + QSize(int(10 * self.__size_mult), int(10 * self.__size_mult))
+            )
         self.retried_on_fail.move(
             0,
             self.tile.height()-self.retried_on_fail.height()

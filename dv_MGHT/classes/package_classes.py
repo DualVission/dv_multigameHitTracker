@@ -242,25 +242,24 @@ class DVmghtGame():
             status=self.status.accessible_name
         )
 
-    @property
-    def caption_style(self) -> str:
+    def caption_style(self, size_mult: float) -> str:
         style_text = self.__style_caption_text().format(
             oc="{",
-            cc="}"
+            cc="}",
+            fs=int(24 * size_mult)
         )
         return style_text
 
     def __style_caption_text(self) -> str:
         return """QLabel {oc}
             background: #00ffffff;
-            font: 24px bold;
+            font: {fs}px bold;
             color: #000;
             border: 0px hidden;
             text-align: center;
         {cc}"""
 
-    @property
-    def background_style(self) -> str:
+    def background_style(self, size_mult: float) -> str:
         border_color = self.status
         if self.status.is_selected:
             if self.status.is_success and self.status.is_current:
@@ -272,6 +271,8 @@ class DVmghtGame():
             bd=DVstatusColors.get_color_from_status(border_color),
             oc="{",
             cc="}",
+            bw=int(2 * size_mult),
+            br=int(size_mult),
             id=self.name.id
         )
         return style_text
@@ -279,8 +280,8 @@ class DVmghtGame():
     def __style_background_text(self) -> str:
         return """QWidget QLabel {oc}
             background: {bg};
-            border: 2px solid {bd};
-            border-radius: 1px;
+            border: {bw}px solid {bd};
+            border-radius: {br}px;
             {cc}
         """
 
