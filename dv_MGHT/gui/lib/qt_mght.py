@@ -186,6 +186,7 @@ class GameQtTile(QtWidgets.QStackedWidget):
         self.game = game
         self._parent = parent
         self._window = window
+        self._game_options = None 
         self.__size_mult = size_mult
 
         # Select Game Display and Buttons
@@ -240,13 +241,27 @@ class GameQtTile(QtWidgets.QStackedWidget):
 
         self.update_status()
 
+
     def update_status(self):
+        vis_bool = self._window._selected_package.settings.display_counter
+        if self._game_options != None:
+            self.caption.setText(self._game_options.caption)
+            vis_bool = vis_bool and self._window._selected_package_options.display_counter
+        elif self._window._selected_package_options != None:
+            vis_bool = vis_bool and self._window._selected_package_options.display_counter
+            if self._game_options == None:
+                if self.game.name.id in self._window._selected_package_options.games:
+                    self._game_options = self._window._selected_package_options.games[
+                    self.game.name.id
+                    ]
+            if self._game_options != None:
+                self.caption.setText(self._game_options.caption)
         self.setStyleSheet(self.game.background_style(self.__size_mult))
         self.caption.setStyleSheet(self.game.caption_style(self.__size_mult))
         self.retried_on_fail.setVisible(self.game.status.is_retry)
         self.setAccessibleName(self.game.accessible_name)
         self.caption.resize(self.caption.sizeHint() + QSize(int(10* self.__size_mult), 0))
-        if self._window._selected_package.settings.display_counter:
+        if vis_bool:
             self.counter.setVisible(True)
             self.counter.setText(self.game.personal_best_text)
             self.tile.setMinimumSize(

@@ -9,11 +9,6 @@ Classes:
     - [ ] TODO
   - DVmghtGame:
     - [ ] Update PB to reflect multiple hit types
-  - ZIP Tools
-    - [ ] Pseudo Glob ZIP items
-    - [ ] Package from ZIP
-    - [ ] Graphics from ZIP (PIL?)
-    - [ ] TODO
 
 Interface:
 - State Loading:
@@ -22,10 +17,20 @@ Interface:
   - [ ] TODO
 - Options:
   - [ ] Per Package Options:
-    - [ ] Custom Captions
-    - [ ] Disable Game Tile Background Images
+    - [X] Custom Captions
+    - [ ] Disable Game Tile Background Images:
+      - [X] Setting Saves
+      - [ ] Setting Loads
+    - [ ] NDI GUI scaling:
+      - [X] Setting Saves
+      - [ ] Setting Loads
     - [ ] TODO
 - Image Handling:
+  - [ ] TODO
+- ZIP Tools
+  - [ ] Pseudo Glob ZIP items
+  - [ ] Package from ZIP
+  - [ ] Graphics from ZIP (PIL?)
   - [ ] TODO
 
 Asset:
@@ -38,11 +43,6 @@ Asset:
     - [ ] Sunshine/Storm Clouds
     - [ ] Balloon Pop
 
-Interface:
-- Options:
-  - [ ] NDI GUI scaling
-  - [ ]
-
 GUI:
 - Content Window:
   - [ ] TODO
@@ -50,7 +50,7 @@ GUI:
   - Qt MGHT:
     - Game Tile:
       - [ ] Custom Background (how?)
-      - [ ] User Caption (from Content Window)
+      - [X] User Caption (from Content Window)
     - Split Tile <= Qt Split Widget:
       - Data:
         - [ ] Split ID

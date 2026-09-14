@@ -30,8 +30,8 @@ class Ui_ContentWindow(object):
         ContentWindow.setStyleSheet(u"QToolButton {\n"
 "	font-family: \"Segoe UI Symbol\";\n"
 "}")
-        self.actionLoadPackage = QAction(ContentWindow)
-        self.actionLoadPackage.setObjectName(u"actionLoadPackage")
+        self.actionLoadedPackage = QAction(ContentWindow)
+        self.actionLoadedPackage.setObjectName(u"actionLoadedPackage")
         self.actionDarkMode = QAction(ContentWindow)
         self.actionDarkMode.setObjectName(u"actionDarkMode")
         self.actionDarkMode.setCheckable(True)
@@ -43,6 +43,10 @@ class Ui_ContentWindow(object):
         self.actionRandomizeOrderOpenOnStartup.setObjectName(u"actionRandomizeOrderOpenOnStartup")
         self.actionRandomizeOrderOpenOnStartup.setCheckable(True)
         self.actionRandomizeOrderOpenOnStartup.setChecked(True)
+        self.actionQuickPackageOptions = QAction(ContentWindow)
+        self.actionQuickPackageOptions.setObjectName(u"actionQuickPackageOptions")
+        self.actionPackageOptions = QAction(ContentWindow)
+        self.actionPackageOptions.setObjectName(u"actionPackageOptions")
         self.centralwidget = QWidget(ContentWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -50,8 +54,6 @@ class Ui_ContentWindow(object):
         self.gameDisplayWidget = QWidget(self.centralwidget)
         self.gameDisplayWidget.setObjectName(u"gameDisplayWidget")
         self.gameDisplayWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.gameDisplayWidget.setStyleSheet(u"QStackedWidget {\n"
-"}")
 
         self.verticalLayout.addWidget(self.gameDisplayWidget)
 
@@ -273,10 +275,11 @@ class Ui_ContentWindow(object):
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuOptions.menuAction())
-        self.menuFile.addAction(self.actionLoadPackage)
+        self.menuFile.addAction(self.actionLoadedPackage)
         self.menuOptions.addAction(self.actionDarkMode)
-        self.menuOptions.addAction(self.actionDisplayCounters)
         self.menuOptions.addAction(self.actionRandomizeOrderOpenOnStartup)
+        self.menuOptions.addAction(self.actionPackageOptions)
+        self.menuOptions.addAction(self.actionQuickPackageOptions)
 
         self.retranslateUi(ContentWindow)
 
@@ -285,10 +288,12 @@ class Ui_ContentWindow(object):
 
     def retranslateUi(self, ContentWindow):
         ContentWindow.setWindowTitle(QCoreApplication.translate("ContentWindow", u"MainWindow", None))
-        self.actionLoadPackage.setText(QCoreApplication.translate("ContentWindow", u"Load Package...", None))
+        self.actionLoadedPackage.setText(QCoreApplication.translate("ContentWindow", u"Loaded Packages", None))
         self.actionDarkMode.setText(QCoreApplication.translate("ContentWindow", u"Dark Mode", None))
         self.actionDisplayCounters.setText(QCoreApplication.translate("ContentWindow", u"Display Counters", None))
         self.actionRandomizeOrderOpenOnStartup.setText(QCoreApplication.translate("ContentWindow", u"Randomize Order Open on Startup", None))
+        self.actionQuickPackageOptions.setText(QCoreApplication.translate("ContentWindow", u"Package Options", None))
+        self.actionPackageOptions.setText(QCoreApplication.translate("ContentWindow", u"Package Options...", None))
         self.selectedGameLabel.setText(QCoreApplication.translate("ContentWindow", u"TextLabel", None))
         self.gameStatusLabel.setText(QCoreApplication.translate("ContentWindow", u"Set Status to", None))
         self.gameStatus0CurrentButton.setText(QCoreApplication.translate("ContentWindow", u"Current", None))

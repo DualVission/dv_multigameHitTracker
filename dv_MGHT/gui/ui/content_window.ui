@@ -341,23 +341,24 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLoadPackage"/>
+    <addaction name="actionLoadedPackage"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
      <string>Options</string>
     </property>
     <addaction name="actionDarkMode"/>
-    <addaction name="actionDisplayCounters"/>
     <addaction name="actionRandomizeOrderOpenOnStartup"/>
+    <addaction name="actionPackageOptions"/>
+    <addaction name="actionQuickPackageOptions"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoadPackage">
+  <action name="actionLoadedPackage">
    <property name="text">
-    <string>Load Package...</string>
+    <string>Loaded Packages</string>
    </property>
   </action>
   <action name="actionDarkMode">
@@ -388,6 +389,16 @@
    </property>
    <property name="text">
     <string>Randomize Order Open on Startup</string>
+   </property>
+  </action>
+  <action name="actionQuickPackageOptions">
+   <property name="text">
+    <string>Package Options</string>
+   </property>
+  </action>
+  <action name="actionPackageOptions">
+   <property name="text">
+    <string>Package Options...</string>
    </property>
   </action>
  </widget>

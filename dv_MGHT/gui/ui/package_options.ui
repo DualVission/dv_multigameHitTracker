@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PackageOptionsWindow</class>
+ <widget class="QDialog" name="PackageOptionsWindow">
+  <property name="windowModality">
+   <enum>Qt::WindowModality::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>362</width>
+    <height>354</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">*[ sectionHeader ] {
+	text-align: bottom;
+}
+*[ sectionHeader=&quot;1&quot; ]{
+	font: 550 14pt &quot;Segoe UI&quot;;
+	border-bottom: 2px solid white;
+}
+*[ sectionHeader=&quot;2&quot; ]{
+	font: 650 13pt &quot;Segoe UI&quot;;
+	border-bottom: 1px solid white;
+}
+*[ sectionHeader=&quot;3&quot; ]{
+	font: 750 12pt &quot;Segoe UI&quot;;
+	border-bottom: 1px dotted white;
+}
+*[ sectionHeader=&quot;4&quot; ]{
+	font: 850 11pt &quot;Segoe UI&quot;;
+}</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="windowLayout">
+   <item>
+    <widget class="QWidget" name="mainLayoutWidget" native="true">
+     <layout class="QVBoxLayout" name="mainLayout">
+      <item>
+       <widget class="QWidget" name="packageWidget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>140</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="packageLayout">
+         <property name="leftMargin">
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="packageLabel">
+           <property name="text">
+            <string>Package Level Options</string>
+           </property>
+           <property name="sectionHeader" stdset="0">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QScrollArea" name="packageScroll">
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="packageGridWidget">
+            <property name="styleSheet">
+             <string notr="true">QLabel {
+	qproperty-wordWrap: true;
+}</string>
+            </property>
+            <layout class="QGridLayout" name="packageGrid">
+             <item row="0" column="0">
+              <widget class="QLabel" name="package1CounterLabel">
+               <property name="text">
+                <string>Display Hit Counter on Game Tiles</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="package2GameBgImgCheck">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="package2GameBgImgLabel">
+               <property name="text">
+                <string>Display Background Images on Game Tiles</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="package1CounterCheck">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string notr="true"/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="package3GameBoardSizeLabel">
+               <property name="text">
+                <string>NDI Game Board Size</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <layout class="QVBoxLayout" name="package3GameBoardSizeLayout">
+               <item>
+                <widget class="QSpinBox" name="package3GameBoardSizeXBox">
+                 <property name="suffix">
+                  <string>px</string>
+                 </property>
+                 <property name="maximum">
+                  <number>10000</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="package3GameBoardSizeYBox">
+                 <property name="suffix">
+                  <string>px</string>
+                 </property>
+                 <property name="maximum">
+                  <number>4000</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="package3GameBoardSizeButton">
+                 <property name="text">
+                  <string>Display NDI Window</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="gameWidget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>140</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="gameLayout">
+         <item>
+          <widget class="QLabel" name="gameLabel">
+           <property name="text">
+            <string>Game Options</string>
+           </property>
+           <property name="sectionHeader" stdset="0">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QScrollArea" name="gameScroll">
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="gameOptionsWidget">
+            <layout class="QVBoxLayout" name="gameOptionsLayout"/>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Save</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PackageOptionsWindow</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>PackageOptionsWindow</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>205</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>205</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

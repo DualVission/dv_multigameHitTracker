@@ -7,16 +7,21 @@ set outputDir=./dv_MGHT/gui/gen/
 cd ./dv_MGHT/gui/ui/
 echo %cd%
 
+title UIC Parse
+
+color 47
+
 set length = 0
 
 for /l %%a in (0,1,1000) DO (
   if "!cd:~%%a,1!"=="" (
     set /a length = %%a + 1
-    goto EXIT
+    goto EXIT_LOOP
   )
 )
 
-:EXIT
+:EXIT_LOOP
+color 17
 echo %length%
 
 for /r %%f in (*) do (
@@ -30,4 +35,7 @@ for /r %%f in (ui_*.py) do (
     move /y %%f "../gen/"
 )
 
-set /p hi=""
+color 07
+
+set /p leave=Type "a" to exit...
+if "%leave%" neq "a" (goto EXIT_LOOP)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from enum import Enum, Flag, auto
-# import json
 
 # TODO
 
@@ -38,51 +37,80 @@ class DVstatusColors(Enum):
         if check_status.name in cls.__members__:
             return cls.__members__[check_status.name].value
 
+class DVsplitTypes(Enum):
+    LINEAR = "linear"
+    OPEN   = "open"
+
 # Class that contains split information, needs to be separate from games
 class DVmghtSplit():
     def __init__(
         self,
+        parent: DVmghtGame | DVmghtSplit,
         split_id: str,
         caption: str | None = None,
         splits: list = [],
         pb: int = 0,
         path: str | None = None,
         selectable: bool | None = True,
+        split_type: str | None = None,
         **kwargs
     ):
+        self.__parent: DVmghtGame | DVmghtSplit = parent
         self.id = split_id
         self.__caption = caption
         # TODO
         self.splits: list[dict] = []
+        converted_split_type = None
+        if split_type == None:
+            converted_split_type = self.__parent.split_type
+        else:
+            converted_split_type = DVsplitTypes(split_type)
+        self.split_type = converted_split_type
         self.selectable = selectable
         self.__pb = pb
         self.__path = path
         self.__future_proof: dict = {**kwargs}
 
+        self.split_from_id: dict[str, DVmghtSplit] = {}
+
         for split in splits:
             self.add_split(split)
 
 
+    @property
+    def parent(self) -> DVmghtGame | DVmghtSplit | None:
+        return self.__parent
+    @parent.setter
+    def parent(self, other: DVmghtGame | DVmghtSplit) -> None:
+        self.__parent = other
 
     @property
     def personal_best(self):
         resultSum = self.__pb
-        for split in splits:
+        for split in self.splits:
             resultSum += split.personal_best
         return resultSum
 
-    def add_split(self, other: dict | DVmghtSplit) -> None:
-        if isinstance(other, DVmghtSplit):
-            self.splits.append(other)
-            return
-        self.splits.append(DVmghtSplit(**other))
+    @property
+    def personal_best_text(self) -> str:
+        return str(int(max(self.personal_best, 0)))
 
+    def add_split(self, other: dict) -> None:
+        if other["split_id"] == "":
+            return
+        other = { "parent": self, **other }
+        new_split = DVmghtSplit(**other)
+        self.splits.append(new_split)
+        self.split_from_id[new_split.id] = new_split
 
 # Class that contains and controls game contents
 class DVmghtGame():
     class gameStatus():
         def __init__(self):
             self.__value: DVgameStatus = DVgameStatus.UPCOMING
+
+        def __str__(self) -> str:
+            return str(self.__value)
 
         def set(self, other: DVgameStatus) -> None:
             if other.value > DVgameStatus.max():
@@ -182,7 +210,12 @@ class DVmghtGame():
                 self.__value &= ~new_status
 
     class gameName():
-        def __init__(self, game_id: str, caption: str | None = None, game: str | None = None):
+        def __init__(
+            self,
+            game_id: str,
+            caption: str | None = None,
+            game: str | None = None
+        ):
             self.id = game_id
             self.__caption = caption
             self.__game = game
@@ -201,39 +234,61 @@ class DVmghtGame():
 
     def __init__(
         self,
-        name: dict[str],
+        parent: DVmghtPackage,
+        name: dict[str] = {},
         route: str | None = None,
         split_type: str | None = None,
-        splits: list[dict | DVmghtSplit] | None = None,
+        splits: list[dict] = [],
         pb: int = 0,
         path: str | None = None,
         **kwargs
     ):
+        self.__parent: DVmghtPackage  = parent
         self.status = self.gameStatus()
+        if len(name) <= 0:
+            raise TypeError("DVmghtGame.__init__() missing 1 required argument: 'name'")
+        elif "game_id" not in name:
+            raise TypeError(
+                "DVmghtGame.__init__() required argument, 'name', malformed:\n"
+                + name
+            )
         self.name = self.gameName(**name)
         self.route = route
-        self.splitType = split_type
-        self.splits: list[DVmghtSplit] = []
+        if split_type == None:
+            converted_split_type = self.__parent.settings.default_split_type
+        else:
+            converted_split_type = DVsplitTypes(split_type)
+        self.split_type = converted_split_type
+        self.splits: list[ DVmghtSplit ] = []
         self.__pb = pb
         self.__path = path
         self.__future_proof = {**kwargs}
 
-        for new_split in splits or []:
+        self.split_from_id: dict[str, DVmghtSplit] = {}
+
+        for new_split in splits:
             self.add_split(new_split)
 
     def __str__(self):
         return self.name.game
 
     @property
+    def parent(self) -> DVmghtPackage:
+        return self.__parent
+    @parent.setter
+    def parent(self, other: DVmghtPackage) -> None:
+        self.__parent = other
+
+    @property
     def personal_best(self):
         resultSum = self.__pb
-        for split in splits:
+        for split in self.splits:
             resultSum += split.personal_best
         return resultSum
 
     @property
     def personal_best_text(self) -> str:
-        return int(max(self.personal_best, 0))
+        return str(int(max(self.personal_best, 0)))
 
     @property
     def accessible_name(self) -> str:
@@ -285,11 +340,13 @@ class DVmghtGame():
             {cc}
         """
 
-    def add_split(self, other: dict | DVmghtSplit) -> None:
-        if isinstance(other, DVmghtSplit):
-            self.splits.append(other)
+    def add_split(self, other: dict) -> None:
+        if other["split_id"] == "":
             return
-        self.splits.append(DVmghtSplit(**other))
+        other = { "parent": self, **other }
+        new_split = DVmghtSplit(**other)
+        self.splits.append(new_split)
+        self.split_from_id[new_split.id] = new_split
 
     def set_selected(self, other: bool | None = None) -> None:
         if other != None:
@@ -350,13 +407,15 @@ class DVmghtPackage():
         def __init__(
             self,
             display_counter: bool = False,
-            use_tile_img: bool = False,
+            game_bg_img: bool = False,
+            split_bg_img: bool = False,
             default_split_type: str = "linear",
             number_of_hits: int = 1
         ):
             self.display_counter = display_counter
-            self.use_tile_img = use_tile_img
-            self.default_split_type = default_split_type
+            self.game_bg_img = game_bg_img
+            self.split_bg_img = split_bg_img
+            self.default_split_type = DVsplitTypes(default_split_type)
             self.number_of_hits = number_of_hits
 
     def __init__(
@@ -375,6 +434,7 @@ class DVmghtPackage():
         self.id: str = package["package_id"]
         self._games: list[str] = package["games"]
         self.games: list[DVmghtGame] = []
+        self.game_from_id: dict[str, DVmghtGame] = {}
         self._has_splits: bool = package["has_splits"]
         self.__future_proof = {**kwargs}
 
@@ -383,4 +443,6 @@ class DVmghtPackage():
 
     def load_games(self, games_to_load: list[dict]):
         for raw_game in games_to_load:
+            raw_game = {"parent": self, **raw_game}
             self.games.append(DVmghtGame(**raw_game))
+            self.game_from_id[self.games[-1].name.id] = self.games[-1]

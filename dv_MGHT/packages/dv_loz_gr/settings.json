@@ -1,6 +1,7 @@
 {
     "display_counter": false,
-    "use_tile_img": false,
+    "game_bg_img": false,
+    "split_bg_img": false,
     "default_split_type": "linear",
     "number_of_hits": 1
 }
