@@ -1,5 +1,6 @@
 # DualVission's Multigame Hit Tracker 
 > dv_MGHT `[diː viː ˈmaɪt]` 
+
 This tool is as described on the tin, a hit tracker for multiple games and their segments. 
  
 ## Installation 
@@ -70,6 +71,7 @@ Much harder to define than what you would think. For the purposes of my creation
 > **Damage** is classified as any loss of health, including environment damage, fall damage, [...] attacks from enemies that deal damage and also status effects, such as poison [...] as a result of an enemy attack. 
 > 
 > Don't get confused[...] 
+
 But a hit tracker is just that, a tracker, something that counts a value across multiple games and/or segments. 
 
 ## What is a game? 
@@ -78,17 +80,18 @@ A game is as defined by [Wiktionary](https://en.wiktionary.org/wiki/game), but m
 > 
 > game `[geɪm]` 
 > 
-> \1. A playful or competitive activity. 
+> 1. A playful or competitive activity. 
 > 
->   \2. [...] An activity described by a set of rules, especially for the purpose of entertainment, often competitive or having an explicit goal. 
+>   2. [...] An activity described by a set of rules, especially for the purpose of entertainment, often competitive or having an explicit goal. 
 > 
->   \4. [...] A particular instance of playing a game. 
+>   4. [...] A particular instance of playing a game. 
 > 
->   \10. [...] One's manner, style, or performance in playing a game. 
+>   10. [...] One's manner, style, or performance in playing a game. 
 > 
 > video game `[ˈvɪdiːəʊ ɡeɪm]` 
 > 
-> \1. A type of game, existing as and controlled by software, usually run by a video game console or a computer[...]. 
+> 1. A type of game, existing as and controlled by software, usually run by a video game console or a computer[...]. 
+
 But a game should be considered in a more abstract sense. In actuality, a game itself, in the context of dv_MGHT, can be thought of as an explicitly declared large split or segment as part of a larger run. 
  
 ## What is a split? 
@@ -99,24 +102,25 @@ I was genuinely shocked by the number of websites that were not blocked by my em
 > 
 > Noun 
 > 
-> \4. A piece that is split off [...]; a splinter; a fragment 
+> 4. A piece that is split off [...]; a splinter; a fragment 
 > 
 > Verb 
 > 
-> \1. [...] To divide [...] 
+> 1. [...] To divide [...] 
 > 
 > segment `[sɛɡ mɛnt]` 
 > 
 > Noun 
 > 
-> \2. One of the parts into which any body [...] is divided; a part divided or cut off; a section; a portion. 
+> 2. One of the parts into which any body [...] is divided; a part divided or cut off; a section; a portion. 
 > 
-> \3. [...] A portion 
+> 3. [...] A portion 
 It can then be extrapolated that the following definition would apply in speedruns. 
 > 
 > <a name="split">split `[splɪt]` or segment `[sɛɡ mɛnt]`</a> 
 > 
 > A portion of a run or another split, explicitly or implicitly declared, to maintain trackable progress through that portion for comparison between individual runs from a singular runners or trends between multiple runners. 
+
 A distinction can be made further between that delineation is made by a game itself explicitly – such as individual levels in the Super Mario franchise – or implicitly – such as item collection in The Legend of Zelda franchise. 
 
 # Disclaimers 
