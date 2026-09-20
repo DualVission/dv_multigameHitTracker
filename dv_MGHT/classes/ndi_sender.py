@@ -33,7 +33,7 @@ class NDISender():
             raise RuntimeError("NDI failed to initialize.")
 
         self.settings = ndi.SendCreate()
-        self.settings.ndi_name = "dv_MGHT ".format(stream_name)
+        self.settings.ndi_name = "dv_MGHT {}".format(stream_name)
 
         self.sender = ndi.send_create(self.settings)
 

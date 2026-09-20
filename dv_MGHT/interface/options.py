@@ -4,11 +4,11 @@ import dataclasses
 from enum import Enum
 from typing import TYPE_CHECKING, Any, TypeVar, get_origin
 
-from PySide6 import QtCore
+from PySide6 import QtCore, QtGui
 
 from dv_MGHT.interface import persistent_options
 from dv_MGHT.interface.json_tools import json_lib, JSONDecodeError
-from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
+from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame, DVgameStatus
 from dv_MGHT.interface.local_data import (
     _return_with_default,
     Serializer,
@@ -35,7 +35,7 @@ class split_Options(localData):
         self.split = split
         self._parent_options = parent_options
 
-        def split_decoder(split: str, raw_data: dict) -> game_Options:
+        def split_decoder(split: str, raw_data: dict) -> split_option:
             split_option = split_Options(
                 self.data_dir,
                 self.user_dir,
@@ -53,8 +53,8 @@ class split_Options(localData):
             )
         }
         
-        for split in self.split.splits:
-            self._splits[split.id] = split_Options(data_dir, user_dir, split, self)
+        for child_split in self.split.splits:
+            self._splits[child_split.id] = split_Options(data_dir, user_dir, child_split, self)
 
     def load_from_persistent(
         self,
@@ -121,7 +121,7 @@ class game_Options(localData):
         self.game = game
         self._package_options = package_options
 
-        def split_decoder(split: str, raw_data: dict) -> game_Options:
+        def split_decoder(split: str, raw_data: dict) -> split_option:
             split_option = split_Options(
                 self.data_dir,
                 self.user_dir,
@@ -196,7 +196,9 @@ class package_Options(localData):
     _display_counter: bool | None = None
     _game_bg_img: bool | None = None
     _games: dict[str, game_Options] = {}
+
     _game_board_size: QtCore.QSize | None = None
+    _game_board_scale: float | None = None
 
     _package: DVmghtPackage | None = None
 
@@ -220,13 +222,14 @@ class package_Options(localData):
             return game_option
 
         self._SERIAL_DICT = {
-            "display_counter": Serializer(identity, bool),
-            "game_bg_img"    : Serializer(identity, bool),
-            "game_board_size": Serializer(
+            "display_counter" : Serializer(identity, bool),
+            "game_bg_img"     : Serializer(identity, bool),
+            "game_board_size" : Serializer(
                 lambda obj: obj.toTuple(),
                 lambda obj: QtCore.QSize(*obj)
             ),
-            "games"          : Serializer(
+            "game_board_scale": Serializer(identity, float),
+            "games"           : Serializer(
                 lambda obj: { k: v._serialize_fields() for k, v in obj.items()},
                 lambda obj: { k: game_decoder(k, v) for k, v in obj.items() }
             )
@@ -291,23 +294,160 @@ class package_Options(localData):
         self._edit_field("game_bg_img", value)
 
     @property
+    def game_board_size(self) -> QtCore.QSize:
+        return _return_with_default(self._game_board_size, lambda: QtCore.QSize(512, 64))
+    @game_board_size.setter
+    def game_board_size(self, value: QtCore.QSize) -> None:
+        self._edit_field("game_board_size", value)
+
+    @property
+    def game_board_scale(self) -> float:
+        return _return_with_default(self._game_board_scale, lambda: False)
+    @game_board_scale.setter
+    def game_board_scale(self, value: float) -> None:
+        self._edit_field("game_board_scale", value)
+
+    @property
     def games(self) -> dict[str, game_Options]:
         return self._games #_return_with_default(self._games, lambda: {})
     @games.setter
     def games(self, value: dict[str, game_Options]) -> None:
         self._edit_field("games", value)
 
-    @property
-    def game_board_size(self) -> QtCore.QSize:
-        return _return_with_default(self._game_board_size, lambda: QtCore.QSize(512, 64))
-    @game_board_size.setter
-    def game_board_size(self, value: bool) -> None:
-        self._edit_field("game_board_size", value)
+class status_color_options():
+    _UPCOMING:     QtGui.QColor | None = None
+    _SELECTED:     QtGui.QColor | None = None
+    _CURRENT:      QtGui.QColor | None = None
+    _SUCCESS:      QtGui.QColor | None = None
+    _FAILED:       QtGui.QColor | None = None
+    _FORCE_FAILED: QtGui.QColor | None = None
 
+    __items = [
+        "UPCOMING",
+        "SELECTED",
+        "CURRENT",
+        "SUCCESS",
+        "FAILED",
+        "FORCE_FAILED"
+    ]
+
+    _d_UPCOMING     = QtGui.QColor()
+    _d_SELECTED     = QtGui.QColor()
+    _d_CURRENT      = QtGui.QColor()
+    _d_SUCCESS      = QtGui.QColor()
+    _d_FAILED       = QtGui.QColor()
+    _d_FORCE_FAILED = QtGui.QColor()
+
+    _d_UPCOMING.fromString("#ccc")
+    _d_SELECTED.fromString("#0ff")
+    _d_CURRENT.fromString("#fff")
+    _d_SUCCESS.fromString("#1f1")
+    _d_FAILED.fromString("#d21")
+    _d_FORCE_FAILED.fromString("#f0f")
+
+    def __init__(self):
+        pass
+
+    def _set_field(self, field_name: str, value) -> None:
+        if isinstance(value, str):
+            new_color = QtGui.QColor()
+            new_color.fromString(value)
+        elif isinstance(value, QtGui.QColor):
+            new_color = value
+        else:
+            raise TypeError("Expected QColor or String. Received {}.".format(type(value)))
+        setattr(self, "_" + field_name, new_color)
+
+    def to_dict(self) -> dict[tuple] | None:
+        data_to_persist = {}
+        for field_name in self.__items:
+            value = getattr(self, "_" + field_name, None)
+            if value != None:
+                data_to_persist[field_name] = value.toTuple()
+        if len(data_to_persist.keys()) <= 0:
+            return None
+        return data_to_persist
+
+    def _return_with_default(self, field_name: str) -> QtGui.QColor:
+        value = getattr(self, "_" + field_name, None)
+        if value != None:
+            return value
+        return getattr(self, "_d_" + field_name)
+
+    @classmethod
+    def from_dict(
+        cls,
+        persistent: dict,
+        ignore_decode_errors: bool
+    ) -> status_color_options:
+        new_status_colors = status_color_options()
+        for field_name in self.__items:
+            value = persistent.get(field_name, None)
+            if value != None:
+                new_status_colors._set_field(field_name, value)
+        return new_status_colors
+
+    def get_color_from_status(self, check_status: DVgameStatus):
+        match check_status:
+            case DVgameStatus.SELECTED:
+                return self.SELECTED
+            case DVgameStatus.CURRENT:
+                return self.CURRENT
+            case DVgameStatus.SUCCESS:
+                return self.SUCCESS
+            case DVgameStatus.FAILED:
+                return self.FAILED
+            case DVgameStatus.FORCE_FAILED:
+                return self.FORCE_FAILED
+        return self.UPCOMING
+
+    @property
+    def UPCOMING(self) -> QtGui.QColor:
+        return self._return_with_default("UPCOMING")
+    @UPCOMING.setter
+    def UPCOMING(self, value) -> None:
+        self._edit_field("UPCOMING", value)
+
+    @property
+    def SELECTED(self) -> QtGui.QColor:
+        return self._return_with_default("SELECTED")
+    @SELECTED.setter
+    def SELECTED(self, value) -> None:
+        self._edit_field("SELECTED", value)
+
+    @property
+    def CURRENT(self) -> QtGui.QColor:
+        return self._return_with_default("CURRENT")
+    @CURRENT.setter
+    def CURRENT(self, value) -> None:
+        self._edit_field("CURRENT", value)
+
+    @property
+    def SUCCESS(self) -> QtGui.QColor:
+        return self._return_with_default("SUCCESS")
+    @SUCCESS.setter
+    def SUCCESS(self, value) -> None:
+        self._edit_field("SUCCESS", value)
+
+    @property
+    def FAILED(self) -> QtGui.QColor:
+        return self._return_with_default("FAILED")
+    @FAILED.setter
+    def FAILED(self, value) -> None:
+        self._edit_field("FAILED", value)
+
+    @property
+    def FORCE_FAILED(self) -> QtGui.QColor:
+        return self._return_with_default("FORCE_FAILED")
+    @FORCE_FAILED.setter
+    def FORCE_FAILED(self, value) -> None:
+        self._edit_field("FORCE_FAILED", value)
 
 class Options(localData):
     _dark_mode: bool | None = None
     _open_shuffle: bool | None = None
+
+    _status_colors: status_color_options()
 
     def __init__(
         self,
@@ -316,8 +456,12 @@ class Options(localData):
     ):
         super().__init__(data_dir, user_dir)
         self._SERIAL_DICT = {
-            "dark_mode"   : Serializer(identity, bool),
-            "open_shuffle": Serializer(identity, bool)
+            "dark_mode"    : Serializer(identity, bool),
+            "open_shuffle" : Serializer(identity, bool),
+            "status_colors": Serializer(
+                lambda obj: obj.to_dict,
+                status_color_options.from_dict
+            )
         }
 
     # Overrides
@@ -350,6 +494,13 @@ class Options(localData):
     @open_shuffle.setter
     def open_shuffle(self, value: bool) -> None:
         self._edit_field("open_shuffle", value)
+
+    @property
+    def status_colors(self) -> status_color_options:
+        return self._status_colors
+    @status_colors.setter
+    def status_colors(self, value: status_color_options) -> None:
+        self._edit_field("status_colors", value)
 
     
     

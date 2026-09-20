@@ -1,14 +1,16 @@
 README.md:
-  - [ ] End User explanation
-  - [ ] Package Creator (own document?)
+- [X] End User explanation
+Wiki
+- [ ] Package Creator (own document?)
 
 Classes:
 - Package Classes:
   - DVmghtSplit:
-    - [ ] Update PB to reflect multiple hit types
+    - [X] Update PB to reflect multiple hit types
     - [ ] TODO
   - DVmghtGame:
-    - [ ] Update PB to reflect multiple hit types
+    - [X] Update PB to reflect multiple hit types
+    - [ ] Captions from Options
 
 Interface:
 - State Loading:
@@ -46,6 +48,8 @@ Asset:
 GUI:
 - Content Window:
   - [ ] TODO
+- Options Window:
+  - [ ] TODO
 - Lib:
   - Qt MGHT:
     - Game Tile:
@@ -75,7 +79,7 @@ GUI:
   - Generic Window:
     - [ ] self.resizeEvent() => If user resizes window geo => Options.game_board_size?
     - [ ] self.closeEvent()  => If user clicks x           => self.hide()
-    - [ ] self. hide()       => Should overload closeEvent instead if possible
+    - [ ] self.hide()        => Should overload closeEvent instead if possible
     - [ ] Report to Content Window
     - [ ] Receive update commands from Content Window
   - Game Status Display:

@@ -5,15 +5,51 @@
             "game": "The Legend of Zelda: Ocarina of Time (1998)",
             "caption": "OOT"
         },
-        "route": "DJCarmichael",
+        "route": "DJCarmichael Ocarina of Time Any% Hitless-Damageless",
         "split_type": "linear",
-        "splits": [
+        /* "splits": [
             {
-                "split_id": "",
-                "caption": "",
+                "split_id": "oot_deku_tree",
+                "caption": "Complete Inside the Great Deku Tree",
                 "splits": [ ]
-            }
-        ]
+            },    {
+                "split_id": "oot_dodongos",
+                "caption": "Complete Dodongos' Cavern",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_jabu",
+                "caption": "Complete Inside Lord Jabu Jabu's Belly",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_forest",
+                "caption": "Complete Forest Temple",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_fire",
+                "caption": "Complete Fire Temple",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_water",
+                "caption": "Complete Water Temple",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_shadow",
+                "caption": "Complete Shadow Temple",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_spirit",
+                "caption": "Complete Spirit Temple",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_ganons_castle",
+                "caption": "Complete Ganon's Castle",
+                "splits": [ ]
+            },    {
+                "split_id": "oot_ganon",
+                "caption": "Complete Ocarina of Time",
+                "splits": [ ]
+            },
+        ] */
     },    {
         "name": {
             "game_id": "mm",
@@ -22,13 +58,13 @@
         },
         "route": "DJCarmichael",
         "split_type": "linear",
-        "splits": [
+        /* "splits": [
             {
                 "split_id": "",
                 "caption": "",
                 "splits": [ ]
             }
-        ]
+        ] */
 
     },    {
         "name": {
@@ -38,13 +74,13 @@
         },
         "route": "DJCarmichael",
         "split_type": "linear",
-        "splits": [
+        /* "splits": [
             {
                 "split_id": "",
                 "caption": "",
                 "splits": [ ]
             }
-        ]
+        ] */
 
     },    {
         "name": {
@@ -54,13 +90,13 @@
         },
         "route": "DJCarmichael (Dusklight)",
         "split_type": "linear",
-        "splits": [
+        /* "splits": [
             {
                 "split_id": "",
                 "caption": "",
                 "splits": [ ]
             }
-        ]
+        ] */
 
     },    {
         "name": {
@@ -70,13 +106,13 @@
         },
         "route": "DJCarmichael",
         "split_type": "linear",
-        "splits": [
+        /* "splits": [
             {
                 "split_id": "",
                 "caption": "",
                 "splits": [ ]
             }
-        ]
+        ] */
 
     },    {
         "name": {
@@ -86,13 +122,13 @@
         },
         "route": "DJCarmichael (NS2e)",
         "split_type": "linear",
-        "splits": [
+        /* "splits": [
             {
                 "split_id": "",
                 "caption": "",
                 "splits": [ ]
             }
-        ]
+        ] */
 
     },    {
         "name": {
@@ -102,13 +138,13 @@
         },
         "route": "DJCarmichael",
         "split_type": "linear",
-        "splits": [
+        /* "splits": [
             {
                 "split_id": "",
                 "caption": "",
                 "splits": [ ]
             }
-        ]
+        ] */
 
     }
 ]

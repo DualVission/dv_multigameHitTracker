@@ -4,8 +4,6 @@ from PySide6 import QtCore, QtGui, QtWidgets #, QMainWindow
 from PySide6.QtCore import Qt, QUrl, Signal
 
 import sys
-# import typing
-# import random
 import os
 
 from pathlib import Path

@@ -3,9 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 
-from dv_MGHT.classes.package_classes import DVmghtPackage
-from dv_MGHT.interface.json_tools import package_from_json
-
 def is_frozen() -> bool:
     return getattr(sys, "frozen", False)
 
@@ -40,7 +37,7 @@ dv_MGHT only supports: Windows, Linux, and MacOS.
 
     return system_paths[sys.platform]
 
-def get_version() -> str:
+def set_version(for_release: bool = False):
     from github import Github
     from datetime import date
     g = Github()
@@ -62,27 +59,21 @@ def get_version() -> str:
                 _v_tupple = (*today.timetuple()[0:3], "a")
         else:
             _v_tupple = (*today.timetuple()[0:3], 0)
-    if is_frozen():
-        return _version, _v_tupple
-    else:
-        return _version + "unfrozen", (*today.timetuple()[0:3], "unfrozen")
+    if not for_release:
+        _version += "\u03b1"
+        _v_tuple = (*today.timetuple()[0:3], "unfrozen")
+    with open(get_file_path().joinpath("version.py"), "wt", encoding="utf-8") as file:
+        file.write("""
+from __future__ import annotations
 
-VERSION, VERSION_TUPLE = get_version()
+VERSION: str                       = \"{version}\"
+VERSION_TUPLE: tuple[int|str, ...] = {tup}
+""".format(version=_version, tup=_v_tuple))
 
-PACKAGES: list[DVmghtPackage] = []
+try:
+    from .version import VERSION, VERSION_TUPLE
+except:
+    set_version()
+    from .version import VERSION, VERSION_TUPLE
 
-def get_packages() -> None:
-    package_paths_internal_raw = get_package_base_path().glob("*/manifest.json")
-    package_paths_external_raw = get_local_data_path().glob("packages/*/manifest.json")
-    package_paths = [
-        Path(path).parent for path in [
-            *package_paths_internal_raw,
-            *package_paths_external_raw
-        ] if Path(path).parent.parts[-1] != "example"
-    ]
-
-    for package_path in package_paths:
-        PACKAGES.append(package_from_json(package_path))
-    
-    PACKAGES.sort(key=lambda package: package.name)
-get_packages()
+from .packages import PACKAGES, PACKAGE_BY_ID

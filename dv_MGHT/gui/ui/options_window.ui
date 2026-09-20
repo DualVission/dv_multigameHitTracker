@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>optionsWindow</class>
+ <widget class="QDialog" name="optionsWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>362</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QLabel {
+	qproperty-wordWrap: true;
+	max-height: 100%;
+}
+*[ sectionHeader ] {
+	text-align: bottom;
+}
+*[ sectionHeader=&quot;1&quot; ]{
+	font: 550 14pt &quot;Segoe UI&quot;;
+	border-bottom: 2px solid white;
+}
+*[ sectionHeader=&quot;2&quot; ]{
+	font: 650 13pt &quot;Segoe UI&quot;;
+	border-bottom: 1px solid white;
+}
+*[ sectionHeader=&quot;3&quot; ]{
+	font: 750 12pt &quot;Segoe UI&quot;;
+	border-bottom: 1px dotted white;
+}
+*[ sectionHeader=&quot;4&quot; ]{
+	font: 850 11pt &quot;Segoe UI&quot;;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="windowLayout">
+   <item>
+    <layout class="QVBoxLayout" name="mainLayoutWidget">
+     <item>
+      <widget class="QScrollArea" name="optionsScroll">
+       <property name="frameShape">
+        <enum>QFrame::Shape::NoFrame</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="optionsWidget">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>342</width>
+          <height>348</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="optionsLayout">
+         <item>
+          <layout class="QVBoxLayout" name="generalLayout">
+           <item>
+            <widget class="QLabel" name="generalLabel">
+             <property name="text">
+              <string>General Options</string>
+             </property>
+             <property name="sectionHeader" stdset="0">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="generalGrid" columnstretch="1,0">
+             <item row="1" column="0">
+              <widget class="QLabel" name="general2RandomizeOrderLabel">
+               <property name="text">
+                <string>Randomize Order Open on Startup</string>
+               </property>
+               <property name="buddy">
+                <cstring>general2RandomizeOrderCheck</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="general1DarkModeLabel">
+               <property name="text">
+                <string>Dark Mode</string>
+               </property>
+               <property name="buddy">
+                <cstring>general1DarkModeCheck</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="general1DarkModeCheck"/>
+             </item>
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="general2RandomizeOrderCheck"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="statusColorLayout">
+           <item>
+            <widget class="QLabel" name="statusColorLabel">
+             <property name="text">
+              <string>Status Color Options</string>
+             </property>
+             <property name="sectionHeader" stdset="0">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="statusColorGrid" columnstretch="1,0">
+             <item row="1" column="1">
+              <widget class="QToolButton" name="statusSelectedButton">
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="statusFailLabel">
+               <property name="text">
+                <string>Failure</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusFailButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QToolButton" name="statusFailButton">
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="statusCurrentLabel">
+               <property name="text">
+                <string>Current</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusCurrentButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QToolButton" name="statusForceFailedButton">
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="statusSelectedLabel">
+               <property name="text">
+                <string>Selected</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusSelectedButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="statusSuccessLabel">
+               <property name="text">
+                <string>Successful</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusSuccessButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="statusUpcomingLabel">
+               <property name="text">
+                <string>Upcoming</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusUpcomingButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QToolButton" name="statusSuccessButton">
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="statusForceFailedLabel">
+               <property name="text">
+                <string>Force Failed</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusForceFailedButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QToolButton" name="statusCurrentButton">
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QToolButton" name="statusUpcomingButton">
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Save</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>optionsWindow</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>optionsWindow</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

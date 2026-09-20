@@ -3,5 +3,8 @@
     "game_bg_img": false,
     "split_bg_img": false,
     "default_split_type": "linear",
-    "number_of_hits": 1
+    "number_of_hits": 1,
+    "hit_captions": [
+        "Hit"
+    ]
 }

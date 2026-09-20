@@ -43,6 +43,13 @@
                     ""
                 ]
             },
+            "pb": {
+                "description": "This is the list of hit PBs for this game.",
+                "type": "array",
+                "items": {
+                    "type": "int",
+                }
+            },
             "split_type": {
                 "description": "This is how the user interacts with the splits.",
                 "enum": [

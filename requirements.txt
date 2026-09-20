@@ -1,0 +1,10 @@
+json-with-comments~=0.1
+numpy~=2.5.3
+PyGithub~=2.10.0
+
+pyside6~=6.11.2
+pyside6_addons~=6.11.2
+pyside6_essentials~=6.11.2
+
+pyqtdarktheme~=2.1.0
+ndi-python~=5.1.1.2

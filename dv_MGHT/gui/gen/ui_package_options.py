@@ -16,17 +16,21 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
-    QDialogButtonBox, QFrame, QGridLayout, QLabel,
-    QPushButton, QScrollArea, QSizePolicy, QSpinBox,
-    QVBoxLayout, QWidget)
+    QDialogButtonBox, QDoubleSpinBox, QFrame, QGridLayout,
+    QLabel, QPushButton, QScrollArea, QSizePolicy,
+    QSpinBox, QVBoxLayout, QWidget)
 
 class Ui_PackageOptionsWindow(object):
     def setupUi(self, PackageOptionsWindow):
         if not PackageOptionsWindow.objectName():
             PackageOptionsWindow.setObjectName(u"PackageOptionsWindow")
         PackageOptionsWindow.setWindowModality(Qt.WindowModality.ApplicationModal)
-        PackageOptionsWindow.resize(362, 354)
-        PackageOptionsWindow.setStyleSheet(u"*[ sectionHeader ] {\n"
+        PackageOptionsWindow.resize(362, 400)
+        PackageOptionsWindow.setStyleSheet(u"QLabel {\n"
+"	qproperty-wordWrap: true;\n"
+"	max-height: 100%;\n"
+"}\n"
+"*[ sectionHeader ] {\n"
 "	text-align: bottom;\n"
 "}\n"
 "*[ sectionHeader=\"1\" ]{\n"
@@ -67,29 +71,30 @@ class Ui_PackageOptionsWindow(object):
         self.packageScroll.setObjectName(u"packageScroll")
         self.packageScroll.setFrameShape(QFrame.Shape.NoFrame)
         self.packageScroll.setWidgetResizable(True)
-        self.packageGridWidget = QWidget()
-        self.packageGridWidget.setObjectName(u"packageGridWidget")
-        self.packageGridWidget.setStyleSheet(u"QLabel {\n"
-"	qproperty-wordWrap: true;\n"
-"}")
-        self.packageGrid = QGridLayout(self.packageGridWidget)
-        self.packageGrid.setObjectName(u"packageGrid")
-        self.package1CounterLabel = QLabel(self.packageGridWidget)
+        self.packageSubWidget = QWidget()
+        self.packageSubWidget.setObjectName(u"packageSubWidget")
+        self.packageSubWidget.setGeometry(QRect(0, 0, 300, 249))
+        self.packageSubLayout = QVBoxLayout(self.packageSubWidget)
+        self.packageSubLayout.setObjectName(u"packageSubLayout")
+        self.package1Label = QLabel(self.packageSubWidget)
+        self.package1Label.setObjectName(u"package1Label")
+        self.package1Label.setProperty(u"sectionHeader", 2)
+
+        self.packageSubLayout.addWidget(self.package1Label)
+
+        self.package1Grid = QGridLayout()
+        self.package1Grid.setObjectName(u"package1Grid")
+        self.package1CounterLabel = QLabel(self.packageSubWidget)
         self.package1CounterLabel.setObjectName(u"package1CounterLabel")
 
-        self.packageGrid.addWidget(self.package1CounterLabel, 0, 0, 1, 1)
+        self.package1Grid.addWidget(self.package1CounterLabel, 0, 0, 1, 1)
 
-        self.package2GameBgImgCheck = QCheckBox(self.packageGridWidget)
+        self.package2GameBgImgCheck = QCheckBox(self.packageSubWidget)
         self.package2GameBgImgCheck.setObjectName(u"package2GameBgImgCheck")
 
-        self.packageGrid.addWidget(self.package2GameBgImgCheck, 1, 1, 1, 1)
+        self.package1Grid.addWidget(self.package2GameBgImgCheck, 1, 1, 1, 1)
 
-        self.package2GameBgImgLabel = QLabel(self.packageGridWidget)
-        self.package2GameBgImgLabel.setObjectName(u"package2GameBgImgLabel")
-
-        self.packageGrid.addWidget(self.package2GameBgImgLabel, 1, 0, 1, 1)
-
-        self.package1CounterCheck = QCheckBox(self.packageGridWidget)
+        self.package1CounterCheck = QCheckBox(self.packageSubWidget)
         self.package1CounterCheck.setObjectName(u"package1CounterCheck")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -98,36 +103,74 @@ class Ui_PackageOptionsWindow(object):
         self.package1CounterCheck.setSizePolicy(sizePolicy)
         self.package1CounterCheck.setText(u"")
 
-        self.packageGrid.addWidget(self.package1CounterCheck, 0, 1, 1, 1)
+        self.package1Grid.addWidget(self.package1CounterCheck, 0, 1, 1, 1)
 
-        self.package3GameBoardSizeLabel = QLabel(self.packageGridWidget)
-        self.package3GameBoardSizeLabel.setObjectName(u"package3GameBoardSizeLabel")
+        self.package2GameBgImgLabel = QLabel(self.packageSubWidget)
+        self.package2GameBgImgLabel.setObjectName(u"package2GameBgImgLabel")
 
-        self.packageGrid.addWidget(self.package3GameBoardSizeLabel, 2, 0, 1, 1)
+        self.package1Grid.addWidget(self.package2GameBgImgLabel, 1, 0, 1, 1)
 
-        self.package3GameBoardSizeLayout = QVBoxLayout()
-        self.package3GameBoardSizeLayout.setObjectName(u"package3GameBoardSizeLayout")
-        self.package3GameBoardSizeXBox = QSpinBox(self.packageGridWidget)
-        self.package3GameBoardSizeXBox.setObjectName(u"package3GameBoardSizeXBox")
-        self.package3GameBoardSizeXBox.setMaximum(10000)
+        self.package1Grid.setColumnStretch(1, 1)
 
-        self.package3GameBoardSizeLayout.addWidget(self.package3GameBoardSizeXBox)
+        self.packageSubLayout.addLayout(self.package1Grid)
 
-        self.package3GameBoardSizeYBox = QSpinBox(self.packageGridWidget)
-        self.package3GameBoardSizeYBox.setObjectName(u"package3GameBoardSizeYBox")
-        self.package3GameBoardSizeYBox.setMaximum(4000)
+        self.package2Label = QLabel(self.packageSubWidget)
+        self.package2Label.setObjectName(u"package2Label")
+        self.package2Label.setProperty(u"sectionHeader", 2)
 
-        self.package3GameBoardSizeLayout.addWidget(self.package3GameBoardSizeYBox)
+        self.packageSubLayout.addWidget(self.package2Label)
 
-        self.package3GameBoardSizeButton = QPushButton(self.packageGridWidget)
-        self.package3GameBoardSizeButton.setObjectName(u"package3GameBoardSizeButton")
+        self.package2Grid = QGridLayout()
+        self.package2Grid.setObjectName(u"package2Grid")
+        self.package1GameBoardScaleLabel = QLabel(self.packageSubWidget)
+        self.package1GameBoardScaleLabel.setObjectName(u"package1GameBoardScaleLabel")
 
-        self.package3GameBoardSizeLayout.addWidget(self.package3GameBoardSizeButton)
+        self.package2Grid.addWidget(self.package1GameBoardScaleLabel, 2, 1, 1, 1)
 
+        self.package1GameBoardSizeButton = QPushButton(self.packageSubWidget)
+        self.package1GameBoardSizeButton.setObjectName(u"package1GameBoardSizeButton")
+        icon = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.WindowNew))
+        self.package1GameBoardSizeButton.setIcon(icon)
 
-        self.packageGrid.addLayout(self.package3GameBoardSizeLayout, 2, 1, 1, 1)
+        self.package2Grid.addWidget(self.package1GameBoardSizeButton, 3, 1, 1, 2)
 
-        self.packageScroll.setWidget(self.packageGridWidget)
+        self.package1GameBoardSizeXBox = QSpinBox(self.packageSubWidget)
+        self.package1GameBoardSizeXBox.setObjectName(u"package1GameBoardSizeXBox")
+        self.package1GameBoardSizeXBox.setMaximum(10000)
+
+        self.package2Grid.addWidget(self.package1GameBoardSizeXBox, 0, 2, 1, 1)
+
+        self.package1GameBoardLabel = QLabel(self.packageSubWidget)
+        self.package1GameBoardLabel.setObjectName(u"package1GameBoardLabel")
+
+        self.package2Grid.addWidget(self.package1GameBoardLabel, 0, 0, 4, 1)
+
+        self.package1GameBoardSizeLabel = QLabel(self.packageSubWidget)
+        self.package1GameBoardSizeLabel.setObjectName(u"package1GameBoardSizeLabel")
+
+        self.package2Grid.addWidget(self.package1GameBoardSizeLabel, 0, 1, 2, 1)
+
+        self.package1GameBoardScaleBox = QDoubleSpinBox(self.packageSubWidget)
+        self.package1GameBoardScaleBox.setObjectName(u"package1GameBoardScaleBox")
+        self.package1GameBoardScaleBox.setDecimals(2)
+        self.package1GameBoardScaleBox.setMinimum(0.100000000000000)
+        self.package1GameBoardScaleBox.setMaximum(100.000000000000000)
+        self.package1GameBoardScaleBox.setSingleStep(0.100000000000000)
+        self.package1GameBoardScaleBox.setValue(2.000000000000000)
+
+        self.package2Grid.addWidget(self.package1GameBoardScaleBox, 2, 2, 1, 1)
+
+        self.package1GameBoardSizeYBox = QSpinBox(self.packageSubWidget)
+        self.package1GameBoardSizeYBox.setObjectName(u"package1GameBoardSizeYBox")
+        self.package1GameBoardSizeYBox.setMaximum(4000)
+
+        self.package2Grid.addWidget(self.package1GameBoardSizeYBox, 1, 2, 1, 1)
+
+        self.package2Grid.setColumnStretch(2, 1)
+
+        self.packageSubLayout.addLayout(self.package2Grid)
+
+        self.packageScroll.setWidget(self.packageSubWidget)
 
         self.packageLayout.addWidget(self.packageScroll)
 
@@ -151,6 +194,7 @@ class Ui_PackageOptionsWindow(object):
         self.gameScroll.setWidgetResizable(True)
         self.gameOptionsWidget = QWidget()
         self.gameOptionsWidget.setObjectName(u"gameOptionsWidget")
+        self.gameOptionsWidget.setGeometry(QRect(0, 0, 308, 90))
         self.gameOptionsLayout = QVBoxLayout(self.gameOptionsWidget)
         self.gameOptionsLayout.setObjectName(u"gameOptionsLayout")
         self.gameScroll.setWidget(self.gameOptionsWidget)
@@ -181,13 +225,17 @@ class Ui_PackageOptionsWindow(object):
     def retranslateUi(self, PackageOptionsWindow):
         PackageOptionsWindow.setWindowTitle(QCoreApplication.translate("PackageOptionsWindow", u"Dialog", None))
         self.packageLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"Package Level Options", None))
+        self.package1Label.setText(QCoreApplication.translate("PackageOptionsWindow", u"General", None))
         self.package1CounterLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"Display Hit Counter on Game Tiles", None))
         self.package2GameBgImgCheck.setText("")
         self.package2GameBgImgLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"Display Background Images on Game Tiles", None))
-        self.package3GameBoardSizeLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"NDI Game Board Size", None))
-        self.package3GameBoardSizeXBox.setSuffix(QCoreApplication.translate("PackageOptionsWindow", u"px", None))
-        self.package3GameBoardSizeYBox.setSuffix(QCoreApplication.translate("PackageOptionsWindow", u"px", None))
-        self.package3GameBoardSizeButton.setText(QCoreApplication.translate("PackageOptionsWindow", u"Display NDI Window", None))
+        self.package2Label.setText(QCoreApplication.translate("PackageOptionsWindow", u"<html><head/><body><p>NDI<span style=\" vertical-align:super;\">\u00ae</span></p></body></html>", None))
+        self.package1GameBoardScaleLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"Scale", None))
+        self.package1GameBoardSizeButton.setText(QCoreApplication.translate("PackageOptionsWindow", u"Display Window", None))
+        self.package1GameBoardSizeXBox.setSuffix(QCoreApplication.translate("PackageOptionsWindow", u"px", None))
+        self.package1GameBoardLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"Game Board", None))
+        self.package1GameBoardSizeLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"Size", None))
+        self.package1GameBoardSizeYBox.setSuffix(QCoreApplication.translate("PackageOptionsWindow", u"px", None))
         self.gameLabel.setText(QCoreApplication.translate("PackageOptionsWindow", u"Game Options", None))
     # retranslateUi
 

@@ -163,6 +163,7 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
             )
 
         if len(game_object.splits) > 0:
+            self.game_split_layouts[game_object.name.id] = {}
             thisLabel = QtWidgets.QLabel(self.mainLayoutWidget)
             thisLabel.setText(self._option_sentence.format(level=self._split_text))
             thisLabel.setProperty(u"sectionHeader", 2)
@@ -171,7 +172,7 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
             for split in game_object.splits:
                 self.addSplitOptions(
                     split,
-                    game_options[split.id],
+                    game_options.splits[split.id],
                     game_object,
                     self.game_layouts[game_object.name.id]
                 )
@@ -205,16 +206,16 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
                 header_level
             )
         
-        if len(game_object.splits) > 0:
+        if len(split_object.splits) > 0:
             thisLabel = QtWidgets.QLabel(self.mainLayoutWidget)
             thisLabel.setText(self._option_sentence.format(level=self._split_text))
             thisLabel.setProperty(u"sectionHeader", header_level)
             self.game_layouts[game_object.name.id].addWidget(thisLabel)
 
-            for split in split_options.splits:
+            for child_split in split_object.splits:
                 self.addSplitOptions(
-                    split,
-                    split_options[split.id],
+                    child_split,
+                    split_options.splits[child_split.id],
                     game_object,
                     self.game_split_layouts[game_object.name.id][split_object.id],
                     header_level + 1
@@ -230,7 +231,7 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
         parent_layout: QtWidgets.QLayout,
         header_level: int
     ) -> QtWidgets.QLayout:
-        header_level = max(header_level, 4)
+        header_level = min(header_level, 4)
 
         thisLayout = QtWidgets.QVBoxLayout()
 
@@ -355,5 +356,5 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
         self.package1CounterCheck.setChecked(self.package_options.display_counter)
         self.package2GameBgImgCheck.setChecked(self.package_options.game_bg_img)
         game_board_size = self.package_options.game_board_size
-        self.package3GameBoardSizeXBox.setValue(game_board_size.width())
-        self.package3GameBoardSizeYBox.setValue(game_board_size.height())
+        self.package1GameBoardSizeXBox.setValue(game_board_size.width())
+        self.package1GameBoardSizeYBox.setValue(game_board_size.height())

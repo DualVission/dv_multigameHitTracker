@@ -48,8 +48,8 @@ class DVmghtSplit():
         parent: DVmghtGame | DVmghtSplit,
         split_id: str,
         caption: str | None = None,
-        splits: list = [],
-        pb: int = 0,
+        splits: list[ dict ] = [],
+        pb: list[ int | None ] = [],
         path: str | None = None,
         selectable: bool | None = True,
         split_type: str | None = None,
@@ -59,7 +59,6 @@ class DVmghtSplit():
         self.id = split_id
         self.__caption = caption
         # TODO
-        self.splits: list[dict] = []
         converted_split_type = None
         if split_type == None:
             converted_split_type = self.__parent.split_type
@@ -67,7 +66,16 @@ class DVmghtSplit():
             converted_split_type = DVsplitTypes(split_type)
         self.split_type = converted_split_type
         self.selectable = selectable
-        self.__pb = pb
+        self.__pb: list[int|None, ...] = [ None ] * self.__parent.number_of_hits
+        if isinstance(pb, list):
+            if len(pb) <= self.__parent.number_of_hits:
+                for i in range(len(pb)):
+                    self.__pb[i] = pb[i]
+            else:
+                raise TypeError(
+                    "DVmghtGame.__init__() required argument, 'pb', malformed:\n"
+                    + str(pb)
+                )
         self.__path = path
         self.__future_proof: dict = {**kwargs}
 
@@ -76,6 +84,11 @@ class DVmghtSplit():
         for split in splits:
             self.add_split(split)
 
+    @property
+    def caption(self) -> str:
+        if self.__caption == "" or self.__caption == None:
+            return self.id
+        return self.__caption
 
     @property
     def parent(self) -> DVmghtGame | DVmghtSplit | None:
@@ -85,22 +98,33 @@ class DVmghtSplit():
         self.__parent = other
 
     @property
-    def personal_best(self):
-        resultSum = self.__pb
+    def number_of_hits(self) -> int:
+        return len(self.__pb)
+
+    @property
+    def personal_best(self) -> list[int]:
+        resultSums: list[int] = [
+            max(item or 0, 0) for item in self.__pb 
+        ]
         for split in self.splits:
-            resultSum += split.personal_best
-        return resultSum
+            splitPb = split.personal_best
+            for i in range(len(self.__pb)):
+                resultSums[i] += max(splitPb[i], 0)
+        return resultSums
 
     @property
     def personal_best_text(self) -> str:
-        return str(int(max(self.personal_best, 0)))
+        return str(self.personal_best[0])
+
+    @property
+    def splits(self) -> list[DVmghtSplit]:
+        return [ *self.split_from_id.values() ]
 
     def add_split(self, other: dict) -> None:
         if other["split_id"] == "":
             return
         other = { "parent": self, **other }
         new_split = DVmghtSplit(**other)
-        self.splits.append(new_split)
         self.split_from_id[new_split.id] = new_split
 
 # Class that contains and controls game contents
@@ -235,11 +259,11 @@ class DVmghtGame():
     def __init__(
         self,
         parent: DVmghtPackage,
-        name: dict[str] = {},
+        name: dict[ str ] = {},
         route: str | None = None,
         split_type: str | None = None,
-        splits: list[dict] = [],
-        pb: int = 0,
+        splits: list[ dict ] = [],
+        pb: list[ int | None ] = [],
         path: str | None = None,
         **kwargs
     ):
@@ -259,8 +283,17 @@ class DVmghtGame():
         else:
             converted_split_type = DVsplitTypes(split_type)
         self.split_type = converted_split_type
-        self.splits: list[ DVmghtSplit ] = []
-        self.__pb = pb
+        self.__pb: list[int|None, ...] = [ None ] * self.__parent.settings.number_of_hits
+        if isinstance(pb, list):
+            if len(pb) <= self.__parent.settings.number_of_hits:
+                for i in range(len(pb)):
+                    self.__pb[i] = pb[i]
+            else:
+                raise TypeError(
+                    "DVmghtGame.__init__() argument, 'pb', malformed:\n"
+                    + str(pb)
+                )
+            
         self.__path = path
         self.__future_proof = {**kwargs}
 
@@ -280,15 +313,23 @@ class DVmghtGame():
         self.__parent = other
 
     @property
-    def personal_best(self):
-        resultSum = self.__pb
+    def number_of_hits(self) -> int:
+        return len(self.__pb)
+
+    @property
+    def personal_best(self) -> list[int]:
+        resultSums: list[int] = [
+            max(item or 0, 0) for item in self.__pb 
+        ]
         for split in self.splits:
-            resultSum += split.personal_best
-        return resultSum
+            splitPb = split.personal_best
+            for i in range(len(self.__pb)):
+                resultSums[i] += max(splitPb[i], 0)
+        return resultSums
 
     @property
     def personal_best_text(self) -> str:
-        return str(int(max(self.personal_best, 0)))
+        return str(self.personal_best[0])
 
     @property
     def accessible_name(self) -> str:
@@ -296,6 +337,10 @@ class DVmghtGame():
             name=self.name.game,
             status=self.status.accessible_name
         )
+
+    @property
+    def splits(self) -> list[DVmghtSplit]:
+        return [ *self.split_from_id.values() ]
 
     def caption_style(self, size_mult: float) -> str:
         style_text = self.__style_caption_text().format(
@@ -345,7 +390,6 @@ class DVmghtGame():
             return
         other = { "parent": self, **other }
         new_split = DVmghtSplit(**other)
-        self.splits.append(new_split)
         self.split_from_id[new_split.id] = new_split
 
     def set_selected(self, other: bool | None = None) -> None:
@@ -410,13 +454,26 @@ class DVmghtPackage():
             game_bg_img: bool = False,
             split_bg_img: bool = False,
             default_split_type: str = "linear",
-            number_of_hits: int = 1
+            number_of_hits: int = 1,
+            hit_captions: list[str] = None,
+            **kwargs
         ):
             self.display_counter = display_counter
             self.game_bg_img = game_bg_img
             self.split_bg_img = split_bg_img
             self.default_split_type = DVsplitTypes(default_split_type)
             self.number_of_hits = number_of_hits
+            self.hit_captions: list[str] = [ "Hit" * self.number_of_hits ]
+            if len(hit_captions) <= self.number_of_hits:
+                self.hit_captions[:len(hit_captions)] = [
+                    item or "Hit" for item in hit_captions
+                ]
+            else:
+                raise TypeError(
+                    "DVmghtPackage.settings.__init__() argument, 'hit_captions', malformed:\n"
+                    + str(hit_captions)
+                )
+            self.__future_proof = {**kwargs}
 
     def __init__(
         self,

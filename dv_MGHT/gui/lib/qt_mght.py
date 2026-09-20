@@ -7,13 +7,19 @@ from PySide6.QtCore import Qt, QUrl, Signal, QSize
 from functools import partial
 from pathlib import Path
 import os
+from enum import Enum #, Flag, auto
 
 import typing
 import random
 
 import dv_MGHT
 from dv_MGHT.gui.lib import flow_layout, clickable_label
-from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame, DVgameStatus
+from dv_MGHT.classes.package_classes import (
+    DVmghtPackage,
+    DVmghtGame,
+    DVgameStatus,
+    DVstatusColors
+)
 
 class GameFlowLayout(flow_layout.FlowLayout):
     def __init__(self, parent=None, center=False):
@@ -221,6 +227,8 @@ class GameQtTile(QtWidgets.QStackedWidget):
         )
         self.retried_on_fail.setStyleSheet(""" QLabel { border: 0px hidden; }""")
 
+        self._retried_effect = QtWidgets.QGraphicsColorizeEffect(self)
+
         # Game Display Text
         self.caption = QtWidgets.QLabel(self.tile)
         self.caption.setText(self.game.name.caption)
@@ -241,6 +249,12 @@ class GameQtTile(QtWidgets.QStackedWidget):
 
         self.update_status()
 
+    @property
+    def status_colors(self) -> Enum:
+        return DVstatusColors
+        # return self._window._options.status_colors
+
+
 
     def update_status(self):
         vis_bool = self._window._selected_package.settings.display_counter
@@ -258,7 +272,13 @@ class GameQtTile(QtWidgets.QStackedWidget):
                 self.caption.setText(self._game_options.caption)
         self.setStyleSheet(self.game.background_style(self.__size_mult))
         self.caption.setStyleSheet(self.game.caption_style(self.__size_mult))
+
+        # TODO - The enum should be storing QColor to begin with, but that is not yet implemented
+        failed_color = QtGui.QColor()
+        failed_color.fromString(self.status_colors.FAILED.value)
         self.retried_on_fail.setVisible(self.game.status.is_retry)
+        self._retried_effect.setColor(failed_color)
+
         self.setAccessibleName(self.game.accessible_name)
         self.caption.resize(self.caption.sizeHint() + QSize(int(10* self.__size_mult), 0))
         if vis_bool:

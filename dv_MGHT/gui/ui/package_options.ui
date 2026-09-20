@@ -10,14 +10,18 @@
     <x>0</x>
     <y>0</y>
     <width>362</width>
-    <height>354</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">*[ sectionHeader ] {
+   <string notr="true">QLabel {
+	qproperty-wordWrap: true;
+	max-height: 100%;
+}
+*[ sectionHeader ] {
 	text-align: bottom;
 }
 *[ sectionHeader=&quot;1&quot; ]{
@@ -73,58 +77,95 @@
            <property name="widgetResizable">
             <bool>true</bool>
            </property>
-           <widget class="QWidget" name="packageGridWidget">
-            <property name="styleSheet">
-             <string notr="true">QLabel {
-	qproperty-wordWrap: true;
-}</string>
+           <widget class="QWidget" name="packageSubWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>300</width>
+              <height>249</height>
+             </rect>
             </property>
-            <layout class="QGridLayout" name="packageGrid">
-             <item row="0" column="0">
-              <widget class="QLabel" name="package1CounterLabel">
+            <layout class="QVBoxLayout" name="packageSubLayout">
+             <item>
+              <widget class="QLabel" name="package1Label">
                <property name="text">
-                <string>Display Hit Counter on Game Tiles</string>
+                <string>General</string>
+               </property>
+               <property name="sectionHeader" stdset="0">
+                <number>2</number>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QCheckBox" name="package2GameBgImgCheck">
+             <item>
+              <layout class="QGridLayout" name="package1Grid" columnstretch="0,1">
+               <item row="0" column="0">
+                <widget class="QLabel" name="package1CounterLabel">
+                 <property name="text">
+                  <string>Display Hit Counter on Game Tiles</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QCheckBox" name="package2GameBgImgCheck">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="package1CounterCheck">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string notr="true"/>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="package2GameBgImgLabel">
+                 <property name="text">
+                  <string>Display Background Images on Game Tiles</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="package2Label">
                <property name="text">
-                <string/>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;NDI&lt;span style=&quot; vertical-align:super;&quot;&gt;®&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="sectionHeader" stdset="0">
+                <number>2</number>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="package2GameBgImgLabel">
-               <property name="text">
-                <string>Display Background Images on Game Tiles</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QCheckBox" name="package1CounterCheck">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="package3GameBoardSizeLabel">
-               <property name="text">
-                <string>NDI Game Board Size</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <layout class="QVBoxLayout" name="package3GameBoardSizeLayout">
-               <item>
-                <widget class="QSpinBox" name="package3GameBoardSizeXBox">
+             <item>
+              <layout class="QGridLayout" name="package2Grid" columnstretch="0,0,1">
+               <item row="2" column="1">
+                <widget class="QLabel" name="package1GameBoardScaleLabel">
+                 <property name="text">
+                  <string>Scale</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1" colspan="2">
+                <widget class="QPushButton" name="package1GameBoardSizeButton">
+                 <property name="text">
+                  <string>Display Window</string>
+                 </property>
+                 <property name="icon">
+                  <iconset theme="QIcon::ThemeIcon::WindowNew"/>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QSpinBox" name="package1GameBoardSizeXBox">
                  <property name="suffix">
                   <string>px</string>
                  </property>
@@ -133,20 +174,46 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QSpinBox" name="package3GameBoardSizeYBox">
+               <item row="0" column="0" rowspan="4">
+                <widget class="QLabel" name="package1GameBoardLabel">
+                 <property name="text">
+                  <string>Game Board</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" rowspan="2">
+                <widget class="QLabel" name="package1GameBoardSizeLabel">
+                 <property name="text">
+                  <string>Size</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
+                <widget class="QDoubleSpinBox" name="package1GameBoardScaleBox">
+                 <property name="decimals">
+                  <number>2</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.100000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>2.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QSpinBox" name="package1GameBoardSizeYBox">
                  <property name="suffix">
                   <string>px</string>
                  </property>
                  <property name="maximum">
                   <number>4000</number>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="package3GameBoardSizeButton">
-                 <property name="text">
-                  <string>Display NDI Window</string>
                  </property>
                 </widget>
                </item>
@@ -187,6 +254,14 @@
             <bool>true</bool>
            </property>
            <widget class="QWidget" name="gameOptionsWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>308</width>
+              <height>90</height>
+             </rect>
+            </property>
             <layout class="QVBoxLayout" name="gameOptionsLayout"/>
            </widget>
           </widget>
@@ -218,8 +293,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>205</x>
-     <y>297</y>
+     <x>214</x>
+     <y>734</y>
     </hint>
     <hint type="destinationlabel">
      <x>205</x>
@@ -234,8 +309,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>205</x>
-     <y>297</y>
+     <x>214</x>
+     <y>734</y>
     </hint>
     <hint type="destinationlabel">
      <x>205</x>
