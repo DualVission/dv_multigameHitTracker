@@ -16,33 +16,35 @@ from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
 from dv_MGHT.gui.lib import qt_mght, theme
 from dv_MGHT.gui.gen.ui_content_window import Ui_ContentWindow
 from dv_MGHT.gui.package_options_window import PackageOptionsWindow
+from dv_MGHT.gui.options_window import OptionsWindow
 
 class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
     packageOptionsWindow: PackageOptionsWindow | None = None
+    optionsWindow: OptionsWindow | None = None
     _disables_sentence = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"{disable} {option}",
         None
     )
     _package_disables_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Package Disables",
         None
     )
 
     _display_counter_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Display Hit Counter on Game Tiles",
         None
     )
     _display_game_bg_img = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Display Background Images on Game Tiles",
         None
     )
 
-    _author_text = QCoreApplication.translate("PackageOptionsWindow", u"Author", None)
-    _games_text = QCoreApplication.translate("PackageOptionsWindow", u"Games", None)
+    _author_text = QCoreApplication.translate("ContentWindow", u"Author", None)
+    _games_text = QCoreApplication.translate("ContentWindow", u"Games", None)
 
     options_changed_signal = Signal()
     package_options_changed_signal = Signal()
@@ -127,8 +129,9 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         # Action
         ## File
         ## Options
+        self.actionOptions.triggered.connect(self._on_menu_action_options)
         self.actionDarkMode.triggered.connect(self._on_menu_action_dark_mode)
-        self.actionRandomizeOrderOpenOnStartup.triggered.connect(self._on_menu_open_shuffle)
+        self.actionRandomizeOrderOpenOnStartup.triggered.connect(self._on_menu_action_open_shuffle)
         ## Package Options
         self.actionPackageOptions.triggered.connect(self._on_menu_action_package_options)
         #### Package Options
@@ -153,18 +156,21 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
 
 
     # Options
-    ## Config
     def on_options_changed(self):
         self.actionDarkMode.setChecked(self._options.dark_mode)
         self.actionRandomizeOrderOpenOnStartup.setChecked(self._options.open_shuffle)
         theme.set_dark_theme(self._options.dark_mode, self)
         self.update_status_full()
+    ## Config
+    def _on_menu_action_options(self):
+        self.optionsWindow = OptionsWindow(self, self._options)
+        self.optionsWindow.show()
     ### Dark Mode
     def _on_menu_action_dark_mode(self):
         with self._options as options:
             options.dark_mode = self.actionDarkMode.isChecked()
     ### Open Shuffle
-    def _on_menu_open_shuffle(self):
+    def _on_menu_action_open_shuffle(self):
         with self._options as options:
             options.open_shuffle = self.actionRandomizeOrderOpenOnStartup.isChecked()
 
@@ -182,11 +188,12 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
     def _on_menu_action_package_options(self):
         if self._selected_package_options == None:
             return
-        self.packageOptionsWindow = PackageOptionsWindow(
-            self,
-            self._selected_package,
-            self._selected_package_options
-        )
+        if self.packageOptionsWindow == None:
+            self.packageOptionsWindow = PackageOptionsWindow(
+                self,
+                self._selected_package,
+                self._selected_package_options
+            )
         self.packageOptionsWindow.show()
     ### Display Counter
     def _on_menu_action_display_counter(self):

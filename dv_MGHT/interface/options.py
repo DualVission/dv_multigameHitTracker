@@ -331,39 +331,44 @@ class status_color_options():
         "FORCE_FAILED"
     ]
 
-    _d_UPCOMING     = QtGui.QColor()
-    _d_SELECTED     = QtGui.QColor()
-    _d_CURRENT      = QtGui.QColor()
-    _d_SUCCESS      = QtGui.QColor()
-    _d_FAILED       = QtGui.QColor()
-    _d_FORCE_FAILED = QtGui.QColor()
-
-    _d_UPCOMING.fromString("#ccc")
-    _d_SELECTED.fromString("#0ff")
-    _d_CURRENT.fromString("#fff")
-    _d_SUCCESS.fromString("#1f1")
-    _d_FAILED.fromString("#d21")
-    _d_FORCE_FAILED.fromString("#f0f")
+    _d_UPCOMING     = QtGui.QColor("#ccc")
+    _d_SELECTED     = QtGui.QColor("#0ff")
+    _d_CURRENT      = QtGui.QColor("#fff")
+    _d_SUCCESS      = QtGui.QColor("#1f1")
+    _d_FAILED       = QtGui.QColor("#d21")
+    _d_FORCE_FAILED = QtGui.QColor("#f0f")
 
     def __init__(self):
         pass
 
+    def __eq__(self, other):
+        if not isinstance(other, status_color_options):
+            return False
+        return self.to_dict() == other.to_dict()
+
+    def __str__(self):
+        return str(self.to_dict())
+
     def _set_field(self, field_name: str, value) -> None:
-        if isinstance(value, str):
-            new_color = QtGui.QColor()
-            new_color.fromString(value)
-        elif isinstance(value, QtGui.QColor):
+        new_color: QtGui.QColor
+        if isinstance(value, QtGui.QColor):
             new_color = value
+        elif isinstance(value, list) or isinstance(value, tuple):
+            new_color = QtGui.QColor(*value)
+        elif isinstance(value, str):
+            new_color = QtGui.QColor(value)
+        elif isinstance(value, None):
+            new_color = None
         else:
             raise TypeError("Expected QColor or String. Received {}.".format(type(value)))
         setattr(self, "_" + field_name, new_color)
 
-    def to_dict(self) -> dict[tuple] | None:
+    def to_dict(self) -> dict[str, list[int]] | None:
         data_to_persist = {}
         for field_name in self.__items:
             value = getattr(self, "_" + field_name, None)
             if value != None:
-                data_to_persist[field_name] = value.toTuple()
+                data_to_persist[field_name] = value.toTuple()[:3]
         if len(data_to_persist.keys()) <= 0:
             return None
         return data_to_persist
@@ -374,93 +379,91 @@ class status_color_options():
             return value
         return getattr(self, "_d_" + field_name)
 
-    @classmethod
-    def from_dict(
-        cls,
-        persistent: dict,
-        ignore_decode_errors: bool
-    ) -> status_color_options:
-        new_status_colors = status_color_options()
-        for field_name in self.__items:
-            value = persistent.get(field_name, None)
-            if value != None:
-                new_status_colors._set_field(field_name, value)
-        return new_status_colors
-
-    def get_color_from_status(self, check_status: DVgameStatus):
-        match check_status:
-            case DVgameStatus.SELECTED:
-                return self.SELECTED
-            case DVgameStatus.CURRENT:
-                return self.CURRENT
-            case DVgameStatus.SUCCESS:
-                return self.SUCCESS
-            case DVgameStatus.FAILED:
-                return self.FAILED
-            case DVgameStatus.FORCE_FAILED:
-                return self.FORCE_FAILED
+    def get_color_from_status(self, check_status) -> QtGui.QColor:
+        if check_status.name == "SELECTED":
+            return self.SELECTED
+        if check_status.name == "CURRENT":
+            return self.CURRENT
+        if check_status.name == "SUCCESS":
+            return self.SUCCESS
+        if check_status.name == "FAILED":
+            return self.FAILED
+        if check_status.name == "FORCE_FAILED":
+            return self.FORCE_FAILED
         return self.UPCOMING
+
+    def get_hex_from_status(self, check_status: DVgameStatus) -> str:
+        color = self.get_color_from_status(check_status)
+        return hex(color.rgba())[4:]
 
     @property
     def UPCOMING(self) -> QtGui.QColor:
         return self._return_with_default("UPCOMING")
     @UPCOMING.setter
     def UPCOMING(self, value) -> None:
-        self._edit_field("UPCOMING", value)
+        self._set_field("UPCOMING", value)
 
     @property
     def SELECTED(self) -> QtGui.QColor:
         return self._return_with_default("SELECTED")
     @SELECTED.setter
     def SELECTED(self, value) -> None:
-        self._edit_field("SELECTED", value)
+        self._set_field("SELECTED", value)
 
     @property
     def CURRENT(self) -> QtGui.QColor:
         return self._return_with_default("CURRENT")
     @CURRENT.setter
     def CURRENT(self, value) -> None:
-        self._edit_field("CURRENT", value)
+        self._set_field("CURRENT", value)
 
     @property
     def SUCCESS(self) -> QtGui.QColor:
         return self._return_with_default("SUCCESS")
     @SUCCESS.setter
     def SUCCESS(self, value) -> None:
-        self._edit_field("SUCCESS", value)
+        self._set_field("SUCCESS", value)
 
     @property
     def FAILED(self) -> QtGui.QColor:
         return self._return_with_default("FAILED")
     @FAILED.setter
     def FAILED(self, value) -> None:
-        self._edit_field("FAILED", value)
+        self._set_field("FAILED", value)
 
     @property
     def FORCE_FAILED(self) -> QtGui.QColor:
         return self._return_with_default("FORCE_FAILED")
     @FORCE_FAILED.setter
     def FORCE_FAILED(self, value) -> None:
-        self._edit_field("FORCE_FAILED", value)
+        self._set_field("FORCE_FAILED", value)
 
 class Options(localData):
     _dark_mode: bool | None = None
     _open_shuffle: bool | None = None
 
-    _status_colors: status_color_options()
+    _status_colors: status_color_options | None = None
+    _color_updating: bool = True
 
     def __init__(
         self,
         data_dir: Path,
         user_dir: Path | None = None
     ):
+        def status_colors_decoder(persistent: dict) -> status_color_options:
+            new_status_colors = status_color_options()
+            for field_name, value in persistent.items():
+                if value != None:
+                    new_status_colors._set_field(field_name, value)
+            return new_status_colors
+
         super().__init__(data_dir, user_dir)
         self._SERIAL_DICT = {
             "dark_mode"    : Serializer(identity, bool),
             "open_shuffle" : Serializer(identity, bool),
             "status_colors": Serializer(
-                lambda obj: obj.to_dict,
-                status_color_options.from_dict
+                lambda obj: obj.to_dict(),
+                lambda obj: status_colors_decoder(obj)
             )
         }
 
@@ -497,10 +500,7 @@ class Options(localData):
 
     @property
     def status_colors(self) -> status_color_options:
-        return self._status_colors
+        return _return_with_default(self._status_colors, lambda: status_color_options())
     @status_colors.setter
     def status_colors(self, value: status_color_options) -> None:
         self._edit_field("status_colors", value)
-
-    
-    

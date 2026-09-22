@@ -342,7 +342,7 @@ class DVmghtGame():
     def splits(self) -> list[DVmghtSplit]:
         return [ *self.split_from_id.values() ]
 
-    def caption_style(self, size_mult: float) -> str:
+    def caption_style(self, size_mult: float, options) -> str:
         style_text = self.__style_caption_text().format(
             oc="{",
             cc="}",
@@ -359,7 +359,7 @@ class DVmghtGame():
             text-align: center;
         {cc}"""
 
-    def background_style(self, size_mult: float) -> str:
+    def background_style(self, size_mult: float, options) -> str:
         border_color = self.status
         if self.status.is_selected:
             if self.status.is_success and self.status.is_current:
@@ -367,8 +367,8 @@ class DVmghtGame():
             else:
                 border_color = DVgameStatus.SELECTED
         style_text = self.__style_background_text().format(
-            bg=DVstatusColors.get_color_from_status(self.status),
-            bd=DVstatusColors.get_color_from_status(border_color),
+            bg=options.status_colors.get_hex_from_status(self.status),
+            bd=options.status_colors.get_hex_from_status(border_color),
             oc="{",
             cc="}",
             bw=int(2 * size_mult),
@@ -379,8 +379,8 @@ class DVmghtGame():
 
     def __style_background_text(self) -> str:
         return """QWidget QLabel {oc}
-            background: {bg};
-            border: {bw}px solid {bd};
+            background: #{bg};
+            border: {bw}px solid #{bd};
             border-radius: {br}px;
             {cc}
         """

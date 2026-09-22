@@ -347,8 +347,10 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <addaction name="actionOptions"/>
     <addaction name="actionDarkMode"/>
     <addaction name="actionRandomizeOrderOpenOnStartup"/>
+    <addaction name="separator"/>
     <addaction name="actionPackageOptions"/>
     <addaction name="actionQuickPackageOptions"/>
    </widget>
@@ -399,6 +401,11 @@
   <action name="actionPackageOptions">
    <property name="text">
     <string>Package Options...</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options...</string>
    </property>
   </action>
  </widget>

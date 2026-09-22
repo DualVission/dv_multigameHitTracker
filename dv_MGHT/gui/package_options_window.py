@@ -23,62 +23,62 @@ from dv_MGHT.interface.local_data import localData
 
 class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
     _disables_sentence = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"{disable} {option}",
         None
     )
     _option_sentence = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"{level} Options",
         None
     )
 
     _package_disables_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Package Disables",
         None
     )
     _game_disables_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Game Disables",
         None
     )
     _split_disables_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Split Disables",
         None
     )
 
     _display_counter_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Display Hit Counter on Game Tiles",
         None
     )
     _display_game_bg_img = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Display Background Images on Game Tiles",
         None
     )
 
     _split_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Split",
         None
     )
     _subsplit_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Subsplit",
         None
     )
 
     _caption_text = QCoreApplication.translate(
-        "PackageOptionsWindow",
+        "OptionsWindow",
         u"Caption",
         None
     )
 
-    _author_text = QCoreApplication.translate("PackageOptionsWindow", u"Author", None)
-    _games_text = QCoreApplication.translate("PackageOptionsWindow", u"Games", None)
+    _author_text = QCoreApplication.translate("ContentWindow", u"Author", None)
+    _games_text = QCoreApplication.translate("ContentWindow", u"Games", None)
 
     package_options_changed_signal = Signal()
 
@@ -88,6 +88,7 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
         package: DVmghtPackage,
         package_options: package_Options
     ):
+        self.parent = parent
         super().__init__(parent)
         self.setupUi(self)
         self.package: DVmghtPackage | None = package
@@ -347,8 +348,8 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
     def update_status_full(self):
         self.parent.update_status_full()
 
-    def update_status_at(self, index):
-        self.parent.update_status_at(index)
+    def update_game_status_at(self, index):
+        self.parent.update_game_status_at(index)
 
     def on_package_options_changed(self):
         if self.package_options == None:
@@ -358,3 +359,4 @@ class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
         game_board_size = self.package_options.game_board_size
         self.package1GameBoardSizeXBox.setValue(game_board_size.width())
         self.package1GameBoardSizeYBox.setValue(game_board_size.height())
+        self.update_status_full()

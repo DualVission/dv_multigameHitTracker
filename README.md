@@ -82,11 +82,11 @@ A game is as defined by [Wiktionary](https://en.wiktionary.org/wiki/game), but m
 > 
 > 1. A playful or competitive activity. 
 > 
->   2. [...] An activity described by a set of rules, especially for the purpose of entertainment, often competitive or having an explicit goal. 
+>    2. [...] An activity described by a set of rules, especially for the purpose of entertainment, often competitive or having an explicit goal. 
 > 
->   4. [...] A particular instance of playing a game. 
+>    4. [...] A particular instance of playing a game. 
 > 
->   10. [...] One's manner, style, or performance in playing a game. 
+>    10. [...] One's manner, style, or performance in playing a game. 
 > 
 > video game `[ˈvɪdiːəʊ ɡeɪm]` 
 > 

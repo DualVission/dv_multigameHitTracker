@@ -13,7 +13,7 @@ import typing
 import random
 
 import dv_MGHT
-from dv_MGHT.gui.lib import flow_layout, clickable_label
+from dv_MGHT.gui.lib import flow_layout, clickable_label, multiply_effect
 from dv_MGHT.classes.package_classes import (
     DVmghtPackage,
     DVmghtGame,
@@ -217,9 +217,7 @@ class GameQtTile(QtWidgets.QStackedWidget):
 
         # Retry Indicator
         self.retried_on_fail = QtWidgets.QLabel(self.tile)
-        self.retried_on_fail.setPixmap(QtGui.QPixmap(os.fspath(
-            dv_MGHT.get_img_path().joinpath("retry_icon.png")
-        )))
+        # self.retried_on_fail.setPixmap(pixmap)
         self.retried_on_fail.setScaledContents(True)
         self.retried_on_fail.setFixedSize(
             int(32 * self.__size_mult),
@@ -227,7 +225,11 @@ class GameQtTile(QtWidgets.QStackedWidget):
         )
         self.retried_on_fail.setStyleSheet(""" QLabel { border: 0px hidden; }""")
 
-        self._retried_effect = QtWidgets.QGraphicsColorizeEffect(self)
+        self._retried_effect = multiply_effect.MultiplyEffect(self)
+        self._retried_effect.setImage(QtGui.QImage(os.fspath(
+            dv_MGHT.get_img_path().joinpath("retry_icon.png")
+        )))
+        self.retried_on_fail.setGraphicsEffect(self._retried_effect)
 
         # Game Display Text
         self.caption = QtWidgets.QLabel(self.tile)
@@ -250,10 +252,8 @@ class GameQtTile(QtWidgets.QStackedWidget):
         self.update_status()
 
     @property
-    def status_colors(self) -> Enum:
-        return DVstatusColors
-        # return self._window._options.status_colors
-
+    def options(self):
+        return self._window._options
 
 
     def update_status(self):
@@ -270,14 +270,17 @@ class GameQtTile(QtWidgets.QStackedWidget):
                     ]
             if self._game_options != None:
                 self.caption.setText(self._game_options.caption)
-        self.setStyleSheet(self.game.background_style(self.__size_mult))
-        self.caption.setStyleSheet(self.game.caption_style(self.__size_mult))
+        self.setStyleSheet(self.game.background_style(
+            self.__size_mult,
+            self.options
+        ))
+        self.caption.setStyleSheet(self.game.caption_style(
+            self.__size_mult,
+            self.options
+        ))
 
-        # TODO - The enum should be storing QColor to begin with, but that is not yet implemented
-        failed_color = QtGui.QColor()
-        failed_color.fromString(self.status_colors.FAILED.value)
         self.retried_on_fail.setVisible(self.game.status.is_retry)
-        self._retried_effect.setColor(failed_color)
+        self._retried_effect.setColor(self.options.status_colors.FAILED)
 
         self.setAccessibleName(self.game.accessible_name)
         self.caption.resize(self.caption.sizeHint() + QSize(int(10* self.__size_mult), 0))
