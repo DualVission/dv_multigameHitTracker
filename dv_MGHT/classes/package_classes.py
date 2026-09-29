@@ -129,6 +129,22 @@ class DVmghtSplit():
 
 # Class that contains and controls game contents
 class DVmghtGame():
+    __style_background_text: str ="""
+QWidget QLabel {oc}
+    background: #{bg};
+    border: {bw}px solid #{bd};
+    border-radius: {br}px;
+{cc}
+        """
+    __style_caption_text: str = """
+QLabel {oc}
+    background: #00ffffff;
+    font: {fs}px bold;
+    color: #000;
+    border: 0px hidden;
+    text-align: center;
+{cc}"""
+
     class gameStatus():
         def __init__(self):
             self.__value: DVgameStatus = DVgameStatus.UPCOMING
@@ -343,21 +359,12 @@ class DVmghtGame():
         return [ *self.split_from_id.values() ]
 
     def caption_style(self, size_mult: float, options) -> str:
-        style_text = self.__style_caption_text().format(
+        style_text = self.__style_caption_text.format(
             oc="{",
             cc="}",
             fs=int(24 * size_mult)
         )
         return style_text
-
-    def __style_caption_text(self) -> str:
-        return """QLabel {oc}
-            background: #00ffffff;
-            font: {fs}px bold;
-            color: #000;
-            border: 0px hidden;
-            text-align: center;
-        {cc}"""
 
     def background_style(self, size_mult: float, options) -> str:
         border_color = self.status
@@ -366,7 +373,7 @@ class DVmghtGame():
                 border_color = DVgameStatus.CURRENT
             else:
                 border_color = DVgameStatus.SELECTED
-        style_text = self.__style_background_text().format(
+        style_text = self.__style_background_text.format(
             bg=options.status_colors.get_hex_from_status(self.status),
             bd=options.status_colors.get_hex_from_status(border_color),
             oc="{",
@@ -376,14 +383,6 @@ class DVmghtGame():
             id=self.name.id
         )
         return style_text
-
-    def __style_background_text(self) -> str:
-        return """QWidget QLabel {oc}
-            background: #{bg};
-            border: {bw}px solid #{bd};
-            border-radius: {br}px;
-            {cc}
-        """
 
     def add_split(self, other: dict) -> None:
         if other["split_id"] == "":
