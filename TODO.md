@@ -1,39 +1,40 @@
 README.md:
 - [X] End User explanation
 Wiki
-- [ ] Package Creator (own document?)
+- [ ] Package Creation (own document?)
 
-Classes:
+Interface:
 - Package Classes:
   - DVmghtSplit:
     - [X] Update PB to reflect multiple hit types
     - [ ] TODO
   - DVmghtGame:
     - [X] Update PB to reflect multiple hit types
-    - [ ] Captions from Options
-
-Interface:
 - State Loading:
-  - [ ] User PB loading
+  - [ ] User PB loading (Number of Hits > Time)
   - [ ] Save recover status
   - [ ] TODO
 - Options:
   - [ ] Per Package Options:
     - [X] Custom Captions
     - [ ] Disable Game Tile Background Images:
-      - [X] Setting Saves
-      - [ ] Setting Loads
+          - [X] Setting Saves
+          - [ ] Setting Loads
     - [ ] NDI GUI scaling:
-      - [X] Setting Saves
-      - [ ] Setting Loads
+          - [X] Setting Saves
+          - [ ] Setting Loads
     - [ ] TODO
 - Image Handling:
   - [ ] TODO
-- ZIP Tools
+- ZIP Tools:
   - [ ] Pseudo Glob ZIP items
   - [ ] Package from ZIP
   - [ ] Graphics from ZIP (PIL?)
   - [ ] TODO
+- Stopwatch:
+  - [ ] Start
+  - [ ] Stop
+  - [ ] Lap
 
 Asset:
 - Images:
@@ -56,11 +57,13 @@ GUI:
       - [ ] Custom Background (how?)
       - [X] User Caption (from Content Window)
     - Split Tile <= Qt Split Widget:
+      - [X] User Caption (from Content Window)
       - Data:
         - [ ] Split ID
         - [ ] Caption
         - [ ] Selectable (whether to enable cursor interaction)
         - [ ] Hit Counters
+        - [ ] Timer Display
       - Qt Stuff (For Selectable):
         - On Hover
         - Unhide child splits on activate
@@ -74,6 +77,10 @@ GUI:
       - This is for NDI (Displays current split, prior split, and as many upcoming splits as possible)
       - [ ] TODO 
   - Clock:
+    - [ ] Pulse
+    - [ ] Regular stopwatch
+    - [ ] Break stopwatch
+    - [ ] Segment laps
     - [ ] TODO
 - NDI Options:
   - Generic Window:

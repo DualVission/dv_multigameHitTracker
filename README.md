@@ -2,6 +2,8 @@
 > dv_MGHT `[diː viː ˈmaɪt]` 
 
 This tool is as described on the tin, a hit tracker for multiple games and their segments. 
+
+Inspired by [DJCarmichael](https://www.twitch.tv/djcarmichael)'s [God Run](https://docs.google.com/spreadsheets/d/e/2PACX-1vRZIww0EjUvthgPB4mGgJxWwkfSeGZgWMU2nh8f6UlbGB5N-LUpmRl7X6YtL8L3cKrYlz8k4H68kPqB/pubhtml).
  
 ## Installation 
 To use, install the [latest release](https://github.com/DualVission/dv_multigameHitTracker/releases/latest) or 

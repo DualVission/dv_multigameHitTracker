@@ -20,6 +20,9 @@ def get_asset_path() -> Path:
 def get_img_path() -> Path:
     return get_asset_path().joinpath("img")
 
+def get_txt_path() -> Path:
+    return get_asset_path().joinpath("txt")
+
 def get_local_data_path() -> Path:
     home = Path.home()
 
@@ -66,7 +69,7 @@ def set_version(for_release: bool = False):
         file.write("""
 from __future__ import annotations
 
-VERSION: str                       = \"{version}\"
+VERSION      : str                 = \"{version}\"
 VERSION_TUPLE: tuple[int|str, ...] = {tup}
 """.format(version=_version, tup=_v_tuple))
 

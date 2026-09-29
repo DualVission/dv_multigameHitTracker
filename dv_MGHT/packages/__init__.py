@@ -1,12 +1,27 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from dv_MGHT import get_package_base_path, get_local_data_path
 from dv_MGHT.interface.package_classes import DVmghtPackage
-from dv_MGHT.interface.json_tools import package_from_json
+from dv_MGHT.interface.json_tools import json_lib
 
 PACKAGE_BY_ID: dict[str, DVmghtPackage] = {}
+
+def package_json_reader(path: Path) -> dict:
+    outputD = {
+        **json_lib.read_path(path.joinpath("manifest.json")),
+        "path": os.fspath(path)
+    }
+    if path.joinpath("games.json").exists():
+        outputD["games"] = json_lib.read_path(path.joinpath("games.json"))
+    if path.joinpath("settings.json").exists():
+        outputD["settings"] = json_lib.read_path(path.joinpath("settings.json"))
+    return outputD
+
+def package_from_json(path: Path) -> DVmghtPackage:
+    return DVmghtPackage(**package_json_reader(path))
 
 def get_version(package: DVmghtPackage) -> list[ int ]:
     raw_version = "-".split(package.version.replace(".", "-"))

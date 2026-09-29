@@ -3,13 +3,10 @@ from __future__ import annotations
 import jsonc as json
 import json as json_og
 
-import os
 from enum import Enum, Flag
 from typing import TYPE_CHECKING, Any, get_origin
 import typing
 # import dataclasses
-
-from dv_MGHT.interface.package_classes import DVmghtPackage
 
 if TYPE_CHECKING:
     from collections.abc import Hashable
@@ -150,18 +147,3 @@ class json_lib():
     @classmethod
     def loads(self, content):
         return json.loads(content)
-           
-
-def package_json_reader(path: Path) -> dict:
-    # print(os.fspath(path.parent()))
-    outputD = {
-        **json_lib.read_path(path.joinpath("manifest.json")),
-        "path": os.fspath(path)
-    }
-    if path.joinpath("games.json").exists():
-        outputD["games"] = json_lib.read_path(path.joinpath("games.json"))
-    if path.joinpath("settings.json").exists():
-        outputD["settings"] = json_lib.read_path(path.joinpath("settings.json"))
-    return outputD
-def package_from_json(path: Path) -> DVmghtPackage:
-    return DVmghtPackage(**package_json_reader(path))

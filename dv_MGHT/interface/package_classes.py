@@ -1,11 +1,78 @@
 from __future__ import annotations
 
 from enum import Enum, Flag, auto
+from random import Random
+import re
+
+from dv_MGHT import get_txt_path
 
 def _id_transformation(raw_id: str) -> str:
-    trans_id = raw_id.replace(" ", "_")
+    trans_id = raw_id.strip()
     trans_id = trans_id.lower()
-    return raw_id
+    trans_dict = {
+        "`" : "acute",
+        "~" : "tilda",
+        "!" : "excl",
+        "@" : "at",
+        "$" : "dol",
+        "%" : "perc",
+        "^" : "car",
+        "&" : "amp",
+        "*" : "ast",
+        "(" : "._",
+        ")" : "_.",
+        "+" : "_",
+        "=" : "__",
+        "{" : "._",
+        "}" : "_.",
+        "[" : "._",
+        "]" : "_.",
+        "|" : "_",
+        "<" : "gt",
+        ">" : "lt",
+        "," : ".",
+        "?" : ".",
+        "/" : "_",
+        " " : "_",
+        "\t": "_",
+        "\n": "__",
+        "\r": "__",
+        "\\": "_"
+    }
+    for to_replace, replace_with in trans_dict.items():
+        trans_id = trans_id.replace(to_replace, replace_with)
+    trans_id = re.search(r"(__|)[a-z0-9]\w+", trans_id).group()
+    if trans_id != raw_id:
+        print("raw_id `{}` was transformed to `{}`.".format(raw_id, trans_id))
+    return trans_id
+
+hash_words: list[str] = []
+
+def _hash_package_to_game(package: DVmghtPackage) -> str:
+    game_seed = "{}: {}".format(package.name, len(package.games))
+    # This should guarantee each game gets the same seed each time assuming order is consistent
+    game_random = Random(game_seed)
+
+    hash_number = game_random.randint(0, 999)
+
+    if len(hash_words) <= 0:
+        with open(
+            get_txt_path().joinpath("hash_phrases.txt"),
+            "r",
+            encoding="utf-8"
+        ) as file:
+            for x in file:
+                line = str(x)
+                line = line.strip()
+                if len(line) > 0:
+                    hash_words.append(line.upper())
+        hash_words.sort()
+
+    hash_list = ["noid"]
+    hash_list += game_random.sample(hash_words, 3)
+    hash_list.append("{:03n}".format(hash_number))
+
+    return "_".join(hash_list)
 
 # TODO
 
@@ -42,10 +109,18 @@ class DVmghtSplit():
         path: str | None = None,
         selectable: bool | None = True,
         split_type: str | None = None,
+        package: DVmghtPackage | None = None,
         **kwargs
     ):
         self.__parent: DVmghtGame | DVmghtSplit = parent
-        self.id = split_id
+        trans_id = _id_transformation(split_id)
+        if len(trans_id) <= 0:
+            print(
+                "DVmghtSplit.__init__() required argument, 'split_id', malformed:\n"
+                + split_id
+            )
+            trans_id = _hash_package_to_game(package)
+        self.id = trans_id
         self.__caption = caption
         # TODO
         converted_split_type = None
@@ -109,10 +184,10 @@ class DVmghtSplit():
     def splits(self) -> list[DVmghtSplit]:
         return [ *self.split_from_id.values() ]
 
-    def add_split(self, other: dict) -> None:
+    def add_split(self, other: dict, package: DVmghtPackage) -> None:
         if other["split_id"] == "":
             return
-        other = { "parent": self, **other }
+        other = { "parent": self, **other, "package": package }
         new_split = DVmghtSplit(**other)
         self.split_from_id[new_split.id] = new_split
 
@@ -243,9 +318,18 @@ QLabel {oc}
             self,
             game_id: str,
             caption: str | None = None,
-            game: str | None = None
+            game: str | None = None,
+            package: DVmghtPackage | None = None
         ):
-            self.id = game_id
+            trans_id = _id_transformation(game_id)
+            if len(trans_id) <= 0:
+                print(
+                    "DVmghtGame.gameName.__init__() required argument, "
+                    + "'game_id', malformed:\n"
+                    + game_id
+                )
+                trans_id = _hash_package_to_game(package)
+            self.id = trans_id
             self.__caption = caption
             self.__game = game
 
@@ -281,6 +365,7 @@ QLabel {oc}
                 "DVmghtGame.__init__() required argument, 'name', malformed:\n"
                 + name
             )
+        name = {**name, "package": self.__parent}
         self.name = self.gameName(**name)
         self.route = route
         if split_type == None:
@@ -313,9 +398,11 @@ QLabel {oc}
     @property
     def parent(self) -> DVmghtPackage:
         return self.__parent
-    @parent.setter
-    def parent(self, other: DVmghtPackage) -> None:
-        self.__parent = other
+
+    @property
+    def id(self):
+        return self.name.id
+    
 
     @property
     def number_of_hits(self) -> int:
@@ -376,7 +463,7 @@ QLabel {oc}
     def add_split(self, other: dict) -> None:
         if other["split_id"] == "":
             return
-        other = { "parent": self, **other }
+        other = { "parent": self, **other, "package": self.parent }
         new_split = DVmghtSplit(**other)
         self.split_from_id[new_split.id] = new_split
 
@@ -474,11 +561,19 @@ class DVmghtPackage():
     ):
         self.repository = self.packageRepo(path=path, **repository)
         self.settings = self.packageSettings(**settings)
+        if "package_id" not in package:
+            raise TypeError(
+                "DVmghtPackage.__init__() missing 1 required argument: 'package_id'"
+            )
+        elif len(package["package_id"]) <= 0:
+            raise TypeError(
+                "DVmghtPackage.__init__() required argument, 'package_id', malformed:\n"
+                + package["package_id"]
+            )
+        self.id: str = _id_transformation(package["package_id"])
         self.name: str = package["name"]
         self.version: str = package["version"]
-        self.id: str = package["package_id"]
-        self._games: list[str] = package["games"]
-        self.games: list[DVmghtGame] = []
+        self._internal_games: list[str] = package["games"]
         self.game_from_id: dict[str, DVmghtGame] = {}
         self._has_splits: bool = package["has_splits"]
         self.__future_proof = {**kwargs}
@@ -486,8 +581,15 @@ class DVmghtPackage():
         if games != None:
             self.load_games(games)
 
+    def __str__(self):
+        return "{} ({} {})".format(self.name, self.id, self.version)
+
+    @property
+    def games(self) -> list[DVmghtGame]:
+        return self.game_from_id.values()
+
     def load_games(self, games_to_load: list[dict]):
         for raw_game in games_to_load:
             raw_game = {"parent": self, **raw_game}
-            self.games.append(DVmghtGame(**raw_game))
-            self.game_from_id[self.games[-1].name.id] = self.games[-1]
+            new_game = DVmghtGame(**raw_game)
+            self.game_from_id[new_game.name.id] = new_game

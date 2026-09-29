@@ -301,7 +301,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
             thisAction.setText(package.name)
             thisToolTip = [
                 "{}: ".format(self._author_text) + ", ".join(package.repository.authors),
-                "{}: ".format(self._games_text) + ", ".join(package._games)
+                "{}: ".format(self._games_text) + ", ".join(package._internal_games)
             ]
             thisAction.setToolTip("\n".join(thisToolTip))
             thisAction.triggered.connect(partial(self._load_package, package))

@@ -11,13 +11,12 @@ from pathlib import Path
 import dv_MGHT
 # from dv_MGHT.interface.options import Options
 from dv_MGHT.gui.content_window import ContentWindow
-# from dv_MGHT.classes.ndi_sender import NDISender
+# from dv_MGHT.interface.ndi_sender import NDISender
 
 from github import Github, Auth
 
 # TODO
 myApp = QtWidgets.QApplication(sys.argv)
-myWindow = ContentWindow() # options=OPTIONS)
+myWindow = ContentWindow()
 myWindow.show()
-# myNDI = NDISender(myWindow.gameDisplayWidget)
 sys.exit(myApp.exec())
