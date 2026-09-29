@@ -11,7 +11,7 @@ import random
 
 import dv_MGHT
 from dv_MGHT.gui.gen.ui_package_options import Ui_PackageOptionsWindow
-from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame, DVmghtSplit
+from dv_MGHT.interface.package_classes import DVmghtPackage, DVmghtGame, DVmghtSplit
 from dv_MGHT.interface.options import (
     Options,
     package_Options,

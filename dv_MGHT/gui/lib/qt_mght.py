@@ -14,7 +14,7 @@ import random
 
 import dv_MGHT
 from dv_MGHT.gui.lib import flow_layout, clickable_label, multiply_effect
-from dv_MGHT.classes.package_classes import (
+from dv_MGHT.interface.package_classes import (
     DVmghtPackage,
     DVmghtGame,
     DVgameStatus,

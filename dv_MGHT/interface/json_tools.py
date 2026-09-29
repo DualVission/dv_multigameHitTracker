@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, get_origin
 import typing
 # import dataclasses
 
-from dv_MGHT.classes.package_classes import DVmghtPackage
+from dv_MGHT.interface.package_classes import DVmghtPackage
 
 if TYPE_CHECKING:
     from collections.abc import Hashable

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, get_origin
 
 from dv_MGHT.interface import persistent_options
 from dv_MGHT.interface.json_tools import json_lib, JSONDecodeError
-from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
+from dv_MGHT.interface.package_classes import DVmghtPackage, DVmghtGame
 
 if TYPE_CHECKING:
     from collections.abc import Callable

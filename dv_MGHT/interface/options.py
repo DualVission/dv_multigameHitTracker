@@ -8,7 +8,7 @@ from PySide6 import QtCore, QtGui
 
 from dv_MGHT.interface import persistent_options
 from dv_MGHT.interface.json_tools import json_lib, JSONDecodeError
-from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame, DVgameStatus
+from dv_MGHT.interface.package_classes import DVmghtPackage, DVmghtGame, DVgameStatus
 from dv_MGHT.interface.local_data import (
     _return_with_default,
     Serializer,

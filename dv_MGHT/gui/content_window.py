@@ -11,7 +11,7 @@ import random
 
 import dv_MGHT
 from dv_MGHT.interface.options import Options, package_Options
-from dv_MGHT.classes.package_classes import DVmghtPackage, DVmghtGame
+from dv_MGHT.interface.package_classes import DVmghtPackage, DVmghtGame
 
 from dv_MGHT.gui.lib import qt_mght, theme
 from dv_MGHT.gui.gen.ui_content_window import Ui_ContentWindow

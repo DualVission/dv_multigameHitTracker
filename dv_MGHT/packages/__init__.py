@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from dv_MGHT import get_package_base_path, get_local_data_path
-from dv_MGHT.classes.package_classes import DVmghtPackage
+from dv_MGHT.interface.package_classes import DVmghtPackage
 from dv_MGHT.interface.json_tools import package_from_json
 
 PACKAGE_BY_ID: dict[str, DVmghtPackage] = {}

@@ -9,9 +9,9 @@ import os
 from pathlib import Path
 
 import dv_MGHT
-from dv_MGHT.interface.options import Options
+# from dv_MGHT.interface.options import Options
 from dv_MGHT.gui.content_window import ContentWindow
-from dv_MGHT.classes.ndi_sender import NDISender
+# from dv_MGHT.classes.ndi_sender import NDISender
 
 from github import Github, Auth
 
