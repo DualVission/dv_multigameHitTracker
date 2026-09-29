@@ -17,8 +17,7 @@ from dv_MGHT.gui.lib import flow_layout, clickable_label, multiply_effect
 from dv_MGHT.interface.package_classes import (
     DVmghtPackage,
     DVmghtGame,
-    DVgameStatus,
-    DVstatusColors
+    DVmghtStatus
 )
 
 class GameFlowLayout(flow_layout.FlowLayout):
@@ -45,7 +44,7 @@ class GameFlowLayout(flow_layout.FlowLayout):
 
     def clear_status(self) -> None:
         for widgetItem in self._item_list:
-            widgetItem.widget().game.status.set(DVgameStatus.UPCOMING)
+            widgetItem.widget().game.status.set(DVmghtStatus.UPCOMING)
             widgetItem.widget().update()
 
     def clear_status_after(self, other: int | str | GameQtTile | DVmghtGame) -> None:
@@ -56,7 +55,7 @@ class GameFlowLayout(flow_layout.FlowLayout):
             print("{} in far right.".format(other))
             return
         for widgetItem in self._item_list[old_index + 1:]:
-            widgetItem.widget().game.status.set(DVgameStatus.UPCOMING)
+            widgetItem.widget().game.status.set(DVmghtStatus.UPCOMING)
             widgetItem.widget().update()
 
     def move_left(self, other: int | str | GameQtTile | DVmghtGame) -> None:
@@ -162,7 +161,7 @@ class GameFlowLayout(flow_layout.FlowLayout):
         trail = [ *range(current_chain) ]
         if clear_failed:
             for widgetItem in self._item_list[:current_chain]:
-                widgetItem.widget().game.status.set(DVgameStatus.UPCOMING)
+                widgetItem.widget().game.status.set(DVmghtStatus.UPCOMING)
         if shuffle_failed:
             random.shuffle(trail)
         new_order = header + trail

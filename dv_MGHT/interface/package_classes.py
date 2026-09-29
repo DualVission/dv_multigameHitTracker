@@ -2,9 +2,14 @@ from __future__ import annotations
 
 from enum import Enum, Flag, auto
 
+def _id_transformation(raw_id: str) -> str:
+    trans_id = raw_id.replace(" ", "_")
+    trans_id = trans_id.lower()
+    return raw_id
+
 # TODO
 
-class DVgameStatus(Flag):
+class DVmghtStatus(Flag):
     UPCOMING     =  0 # silver
     SELECTED     =  1 # cyan
     CURRENT      =  2 # white
@@ -20,22 +25,6 @@ class DVgameStatus(Flag):
         for member in cls:
             i += member.value
         return i
-
-
-class DVstatusColors(Enum):
-    UPCOMING     = "#ccc" # silver
-    SELECTED     = "#0ff" # cyan
-    CURRENT      = "#fff" # white
-    SUCCESS      = "#1f1" # green
-    FAILED       = "#d21" # red
-    FORCE_FAILED = "#f0f" # emblem
-
-    CLEAR        = UPCOMING
-
-    @classmethod
-    def get_color_from_status(cls, check_status: DVgameStatus):
-        if check_status.name in cls.__members__:
-            return cls.__members__[check_status.name].value
 
 class DVsplitTypes(Enum):
     LINEAR = "linear"
@@ -147,15 +136,15 @@ QLabel {oc}
 
     class gameStatus():
         def __init__(self):
-            self.__value: DVgameStatus = DVgameStatus.UPCOMING
+            self.__value: DVmghtStatus = DVmghtStatus.UPCOMING
 
         def __str__(self) -> str:
             return str(self.__value)
 
-        def set(self, other: DVgameStatus) -> None:
-            if other.value > DVgameStatus.max():
+        def set(self, other: DVmghtStatus) -> None:
+            if other.value > DVmghtStatus.max():
                 return
-            self.__value &= DVgameStatus.CLEAR
+            self.__value &= DVmghtStatus.CLEAR
             self.__value = other
 
         @property
@@ -198,31 +187,31 @@ QLabel {oc}
 
         @property
         def is_selected(self) -> bool:
-            return self.__value & DVgameStatus.SELECTED
+            return self.__value & DVmghtStatus.SELECTED
         @is_selected.setter
         def is_selected(self, other:bool):
-            self.__set_bit(DVgameStatus.SELECTED, other)
+            self.__set_bit(DVmghtStatus.SELECTED, other)
 
         @property
         def is_current(self) -> bool:
-            return self.__value & DVgameStatus.CURRENT
+            return self.__value & DVmghtStatus.CURRENT
         @is_current.setter
         def is_current(self, other:bool):
-            self.__set_bit(DVgameStatus.CURRENT, other)
+            self.__set_bit(DVmghtStatus.CURRENT, other)
 
         @property
         def is_success(self) -> bool:
-            return self.__value & DVgameStatus.SUCCESS
+            return self.__value & DVmghtStatus.SUCCESS
         @is_success.setter
         def is_success(self, other:bool):
-            self.__set_bit(DVgameStatus.SUCCESS, other)
+            self.__set_bit(DVmghtStatus.SUCCESS, other)
 
         @property
         def is_failed(self) -> bool:
-            return self.__value & DVgameStatus.FAILED
+            return self.__value & DVmghtStatus.FAILED
         @is_failed.setter
         def is_failed(self, other:bool):
-            self.__set_bit(DVgameStatus.FAILED, other)
+            self.__set_bit(DVmghtStatus.FAILED, other)
 
         @property
         def is_retry(self) -> bool:
@@ -230,20 +219,20 @@ QLabel {oc}
             # or where retry is forced.
             # If additional things are added to the future,
             # It will need to be updated.
-            fail_selected = DVgameStatus.FAILED | DVgameStatus.SELECTED
+            fail_selected = DVmghtStatus.FAILED | DVmghtStatus.SELECTED
             return self.__value.value > fail_selected.value
         @is_retry.setter
         def is_retry(self, other:bool):
-            self.__set_bit(DVgameStatus.FORCE_FAILED, other)
+            self.__set_bit(DVmghtStatus.FORCE_FAILED, other)
 
         @property
         def is_forced(self) -> bool:
-            return self.__value & DVgameStatus.FORCE_FAILED
+            return self.__value & DVmghtStatus.FORCE_FAILED
         @is_forced.setter
         def is_forced(self, other: bool):
-            self.__set_bit(DVgameStatus.FORCE_FAILED, other)
+            self.__set_bit(DVmghtStatus.FORCE_FAILED, other)
 
-        def __set_bit(self, new_status: DVgameStatus, other: bool) -> None:
+        def __set_bit(self, new_status: DVmghtStatus, other: bool) -> None:
             if other:
                 self.__value |= new_status
             else:
@@ -370,9 +359,9 @@ QLabel {oc}
         border_color = self.status
         if self.status.is_selected:
             if self.status.is_success and self.status.is_current:
-                border_color = DVgameStatus.CURRENT
+                border_color = DVmghtStatus.CURRENT
             else:
-                border_color = DVgameStatus.SELECTED
+                border_color = DVmghtStatus.SELECTED
         style_text = self.__style_background_text.format(
             bg=options.status_colors.get_hex_from_status(self.status),
             bd=options.status_colors.get_hex_from_status(border_color),
