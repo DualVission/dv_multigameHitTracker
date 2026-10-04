@@ -152,12 +152,19 @@ The code relating to local data is very much inspired by Randovania with heavy m
 > 
 > PyQtDarkTheme: MIT License 
 > 
+> PyQt Hotkey Picker: MIT License
+> 
 > [NDI®](https://docs.ndi.video/all/developing-with-ndi/sdk/licensing) 
 > 
 > [Python](https://docs.python.org/3/license.html) 
 > 
 > [Qt](https://doc.qt.io/qt-6/licensing.html) 
  
+> Randovania: GNU General Public License 
+> 
+> Wind Waker Randomizer: MIT License
+> 
+
 ## Copyright and Rights Notices 
 All copyrights are held by their respective owners. 
 Zach the DualVission does not hold any rights to these owners’ contents. 

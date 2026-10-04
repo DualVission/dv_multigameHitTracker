@@ -8,20 +8,21 @@ from pathlib import Path
 
 import dv_MGHT
 from dv_MGHT.gui.lib import theme
-from dv_MGHT.gui.gen.ui_options_window import Ui_optionsWindow # Why is Options lowercase?
+from dv_MGHT.gui.lib.exposed_methods import CONTENT_WINDOW_HOTKEY_LABELS
+from dv_MGHT.gui.lib. q_hotkey_picker import QHotkeyPicker
+from dv_MGHT.gui.gen.ui_options_window import Ui_OptionsWindow
 from dv_MGHT.interface.options import Options
+from dv_MGHT.interface.package_classes import DVmghtStatus
 
 
-class OptionsWindow(Ui_optionsWindow, QtWidgets.QDialog):
+class OptionsWindow(Ui_OptionsWindow, QtWidgets.QDialog):
     _display_counter_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Display Hit Counter on Game Tiles",
-        None
+        u"Display Hit Counter on Game Tiles"
     )
     _display_game_bg_img = QCoreApplication.translate(
         "OptionsWindow",
-        u"Display Background Images on Game Tiles",
-        None
+        u"Display Background Images on Game Tiles"
     )
 
     current_color_window: dict[str, QtWidgets.QColorDialog] = {}
@@ -39,18 +40,81 @@ class OptionsWindow(Ui_optionsWindow, QtWidgets.QDialog):
         self.setupUi(self)
         self._options: Options = options
 
-        self.statusForceFailedButton.setVisible(advanced_options)
         self.statusForceFailedLabel.setVisible(advanced_options)
+        self.statusForceFailedButton.setVisible(advanced_options)
 
         self.general1DarkModeCheck.clicked.connect(partial(self._on_dark_mode))
         self.general2RandomizeOrderCheck.clicked.connect(partial(self._on_open_shuffle))
 
-        self.statusUpcomingButton.clicked.connect(partial(self._on_status_button, "UPCOMING"))
-        self.statusSelectedButton.clicked.connect(partial(self._on_status_button, "SELECTED"))
-        self.statusCurrentButton.clicked.connect(partial(self._on_status_button, "CURRENT"))
-        self.statusSuccessButton.clicked.connect(partial(self._on_status_button, "SUCCESS"))
-        self.statusFailedButton.clicked.connect(partial(self._on_status_button, "FAILED"))
-        self.statusForceFailedButton.clicked.connect(partial(self._on_status_button, "FORCE_FAILED"))
+        self.status_color_ui: dict[str, dict[str]] = {
+            "UPCOMING": {
+                "status" : DVmghtStatus.UPCOMING,
+                "label"  : self.statusUpcomingLabel,
+                "button" : self.statusUpcomingButton,
+                "revert" : self.statusUpcomingRevert,
+                "visible": True
+            },
+            "SELECTED": {
+                "status" : DVmghtStatus.SELECTED,
+                "label"  : self.statusSelectedLabel,
+                "button" : self.statusSelectedButton,
+                "revert" : self.statusSelectedRevert,
+                "visible": True
+            },
+            "CURRENT": {
+                "status" : DVmghtStatus.CURRENT,
+                "label"  : self.statusCurrentLabel,
+                "button" : self.statusCurrentButton,
+                "revert" : self.statusCurrentRevert,
+                "visible": True
+            },
+            "SUCCESS": {
+                "status" : DVmghtStatus.SUCCESS,
+                "label"  : self.statusSuccessLabel,
+                "button" : self.statusSuccessButton,
+                "revert" : self.statusSuccessRevert,
+                "visible": True
+            },
+            "FAILED": {
+                "status" : DVmghtStatus.FAILED,
+                "label"  : self.statusFailedLabel,
+                "button" : self.statusFailedButton,
+                "revert" : self.statusFailedRevert,
+                "visible": True
+            },
+            "FORCE_FAILED": {
+                "status" : DVmghtStatus.FORCE_FAILED,
+                "label"  : self.statusForceFailedLabel,
+                "button" : self.statusForceFailedButton,
+                "revert" : self.statusForceFailedRevert,
+                "visible": advanced_options
+            }
+        }
+
+        for status, status_dict in self.status_color_ui.items():
+            button = status_dict["button"]
+            revert = status_dict["revert"]
+            button.clicked.connect(partial(self._on_status_color_button, status))
+            revert.clicked.connect(partial(self._on_status_color_revert, status))
+
+        self.hotkeys_ui: dict[str, dict[str, QtWidgets.QWidget]] = {}
+        i: int = 1
+        QHotkeyPicker.setKeyName(Qt.Key.Key_Control, "Ctrl")
+        # QHotkeyPicker.setKeyName(Qt.Key.Key_Shift, "Ctrl")
+
+        for field_name, text in CONTENT_WINDOW_HOTKEY_LABELS.items():
+            new_dict: dict[str, QtWidgets.QWidget] = {}
+            new_label = QtWidgets.QLabel(text["label"], parent=self)
+            new_label.setToolTip(text["tooltip"])
+            self.hotkeyGrid.addWidget(new_label, i, 0)
+            new_dict["label"] = new_label
+            new_picker = QHotkeyPicker(self)
+            new_dict["picker"] = new_picker
+            self.hotkeyGrid.addWidget(new_picker, i, 1)
+            self.hotkeys_ui[field_name] = new_dict
+            i += 1
+
+
 
         # Signals
         self.options_changed_signal.connect(self.on_options_changed)
@@ -82,24 +146,17 @@ QToolButton {oc}
             else:
                 output["fc"] = "white"
             return statusStyle.format(**output)
-        self.statusUpcomingButton.setStyleSheet(
-            tool_style(self._options.status_colors.UPCOMING)
-        )
-        self.statusSelectedButton.setStyleSheet(
-            tool_style(self._options.status_colors.SELECTED)
-        )
-        self.statusCurrentButton.setStyleSheet(
-            tool_style(self._options.status_colors.CURRENT)
-        )
-        self.statusSuccessButton.setStyleSheet(
-            tool_style(self._options.status_colors.SUCCESS)
-        )
-        self.statusFailedButton.setStyleSheet(
-            tool_style(self._options.status_colors.FAILED)
-        )
-        self.statusForceFailedButton.setStyleSheet(
-            tool_style(self._options.status_colors.FORCE_FAILED)
-        )
+        for status_dict in self.status_color_ui.values():
+            button  = status_dict["button"]
+            revert  = status_dict["revert"]
+            status  = status_dict["status"]
+            visible = status_dict["visible"]
+            color   = self._options.status_colors.get_color_from_status(status)
+            button.setStyleSheet(tool_style(color))
+            revert.setVisible(
+                visible and
+                not self._options.status_colors.is_default(status)
+            )
     ## Dark Mode
     def _on_dark_mode(self):
         with self._options as options:
@@ -110,28 +167,38 @@ QToolButton {oc}
             options.open_shuffle = self.general2RandomizeOrderCheck.isChecked()
     ## Status Color
     def _on_status_color(self, status: str, color: QtGui.QColor):
-        these_colors = self._options.status_colors
-        these_colors._set_field(
-            status,
-            color
-        )
         with self._options as options:
-            options.status_colors = these_colors
+            options.status_colors._set_field(
+                status,
+                color
+            )
+            self.on_options_changed()
+    ### Revert
+    def _on_status_color_revert(self, status: str):
+        with self._options as options:
+            options.status_colors._set_field(
+                status,
+                None
+            )
+        self.current_color_window[status].setCurrentColor(
+            getattr(self._options.status_colors, status, QtGui.QColor())
+        )
+        self.on_options_changed()
     ### Launch Window
-    def _on_status_button(self, status: str):
+    def _on_status_color_button(self, status: str):
         if status not in self.current_color_window:
             self.current_color_window[status] = QtWidgets.QColorDialog()
             self.current_color_window[status].setCurrentColor(
                 getattr(self._options.status_colors, status, QtGui.QColor())
             )
-        self.current_color_window[status].currentColorChanged.connect(partial(
-            self._on_status_color,
-            status
-        ))
-        self.current_color_window[status].colorSelected.connect(partial(
-            self._on_status_color,
-            status
-        ))
+            self.current_color_window[status].currentColorChanged.connect(partial(
+                self._on_status_color,
+                status
+            ))
+            self.current_color_window[status].colorSelected.connect(partial(
+                self._on_status_color,
+                status
+            ))
         self.current_color_window[status].show()
 
     def update_status_full(self):

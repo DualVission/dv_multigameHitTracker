@@ -24,61 +24,51 @@ from dv_MGHT.interface.local_data import localData
 class PackageOptionsWindow(Ui_PackageOptionsWindow, QtWidgets.QDialog):
     _disables_sentence = QCoreApplication.translate(
         "OptionsWindow",
-        u"{disable} {option}",
-        None
+        u"{disable} {option}"
     )
     _option_sentence = QCoreApplication.translate(
         "OptionsWindow",
-        u"{level} Options",
-        None
+        u"{level} Options"
     )
 
     _package_disables_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Package Disables",
-        None
+        u"Package Disables"
     )
     _game_disables_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Game Disables",
-        None
+        u"Game Disables"
     )
     _split_disables_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Split Disables",
-        None
+        u"Split Disables"
     )
 
     _display_counter_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Display Hit Counter on Game Tiles",
-        None
+        u"Display Hit Counter on Game Tiles"
     )
     _display_game_bg_img = QCoreApplication.translate(
         "OptionsWindow",
-        u"Display Background Images on Game Tiles",
-        None
+        u"Display Background Images on Game Tiles"
     )
 
     _split_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Split",
-        None
+        u"Split"
     )
     _subsplit_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Subsplit",
-        None
+        u"Subsplit"
     )
 
     _caption_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Caption",
-        None
+        u"Caption"
     )
 
-    _author_text = QCoreApplication.translate("ContentWindow", u"Author", None)
-    _games_text = QCoreApplication.translate("ContentWindow", u"Games", None)
+    _author_text = QCoreApplication.translate("ContentWindow", u"Author")
+    _games_text = QCoreApplication.translate("ContentWindow", u"Games")
 
     package_options_changed_signal = Signal()
 

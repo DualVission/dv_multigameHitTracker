@@ -103,7 +103,8 @@ class localData(object):
         for field_name, serializer in self._SERIAL_DICT.items():
             value = getattr(self, "_" + field_name, None)
             if value != None:
-                data_to_persist[field_name] = serializer.encode(value)
+                if serializer.encode(value) != None:
+                    data_to_persist[field_name] = serializer.encode(value)
         return self._serialized_data(data_to_persist)
 
     def _serialized_data(self, data_to_persist: dict) -> dict:

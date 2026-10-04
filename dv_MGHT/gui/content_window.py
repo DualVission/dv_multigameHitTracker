@@ -14,6 +14,7 @@ from dv_MGHT.interface.options import Options, package_Options
 from dv_MGHT.interface.package_classes import DVmghtPackage, DVmghtGame
 
 from dv_MGHT.gui.lib import qt_mght, theme
+from dv_MGHT.gui.lib.exposed_methods import contentWindowExposedMethods
 from dv_MGHT.gui.gen.ui_content_window import Ui_ContentWindow
 from dv_MGHT.gui.package_options_window import PackageOptionsWindow
 from dv_MGHT.gui.options_window import OptionsWindow
@@ -23,28 +24,24 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
     optionsWindow: OptionsWindow | None = None
     _disables_sentence = QCoreApplication.translate(
         "OptionsWindow",
-        u"{disable} {option}",
-        None
+        u"{disable} {option}"
     )
     _package_disables_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Package Disables",
-        None
+        u"Package Disables"
     )
 
     _display_counter_text = QCoreApplication.translate(
         "OptionsWindow",
-        u"Display Hit Counter on Game Tiles",
-        None
+        u"Display Hit Counter on Game Tiles"
     )
     _display_game_bg_img = QCoreApplication.translate(
         "OptionsWindow",
-        u"Display Background Images on Game Tiles",
-        None
+        u"Display Background Images on Game Tiles"
     )
 
-    _author_text = QCoreApplication.translate("ContentWindow", u"Author", None)
-    _games_text = QCoreApplication.translate("ContentWindow", u"Games", None)
+    _author_text = QCoreApplication.translate("ContentWindow", u"Author")
+    _games_text = QCoreApplication.translate("ContentWindow", u"Games")
 
     options_changed_signal = Signal()
     package_options_changed_signal = Signal()
@@ -124,7 +121,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.gameOrderClearAfterButton.clicked.connect(partial(self.clear_after))
         ### Smart Shuffle
         self.gameOrderSmartShuffleButton.clicked.connect(partial(self.smart_shuffle, True, False))
-        self.gameOrderSmartShuffleClearButton.clicked.connect(partial(self.smart_shuffle, True, True))
+        self.gameOrderSmartShuffleClearButton.clicked.connect(partial(self.smart_clear))
 
         # Action
         ## File
@@ -138,7 +135,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.actionDisplayCounters.triggered.connect(self._on_menu_action_display_counter)
         self.actionDisplayGameBgImg.triggered.connect(self._on_menu_action_game_bg_img)
 
-
+        self.exposed_methods = contentWindowExposedMethods(self)
 
         if options == None:
             options = Options(dv_MGHT.get_local_data_path())
@@ -163,7 +160,8 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.update_status_full()
     ## Config
     def _on_menu_action_options(self):
-        self.optionsWindow = OptionsWindow(self, self._options)
+        if self.optionsWindow == None:
+            self.optionsWindow = OptionsWindow(self, self._options)
         self.optionsWindow.show()
     ### Dark Mode
     def _on_menu_action_dark_mode(self):
@@ -209,7 +207,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
             options.game_bg_img = self.actionDisplayCounters.isChecked()
 
     # Package
-    # Reaction events
+    ## Reaction events
     def _load_package(self, selectedPackage: DVmghtPackage):
         if self._selected_package != None:
             for game in self._selected_package.games:
@@ -308,9 +306,36 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
             self._loaded_packages_actions.append(thisAction)
             self.menuLoadedPackage.addAction(thisAction)
 
-    # Game Statuses
 
-    ## Selected
+    # State
+    ## Open State
+    def open_state(self):
+        pass #TODO
+
+    ## Save State
+    def save_state(self):
+        pass #TODO
+
+    # Game
+    ## Game Select
+    ### First
+    def select_game_first(self):
+        pass #TODO
+
+    ### Prior
+    def select_game_prior(self):
+        pass #TODO
+
+    ### Next
+    def select_game_next(self):
+        pass #TODO  
+
+    ### Last
+    def select_game_last(self):
+        pass #TODO
+
+    ## Game Statuses
+    ### Selected
     def set_selected_game(self, game: DVmghtGame):
         if self._selected_game == game:
             self._selected_game.set_selected(False)
@@ -326,7 +351,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.update_game_status_display_at(self._selected_game)
         self._show_game_options(True)
 
-    ## Current
+    ### Current
     def set_current_game(self, game: DVmghtGame):
         if self._current_game != None:
             self._current_game.set_current(False)
@@ -339,7 +364,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         if self._selected_game != None:
             self.set_current_game(self._selected_game)
 
-    ## Failed
+    ### Failed
     def set_game_failed(self, game: DVmghtGame):
         game.set_failed()
         self.update_game_status_display_at(game)
@@ -348,7 +373,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         if self._selected_game != None:
             self.set_game_failed(self._selected_game)
 
-    ## Success
+    ### Success
     def set_game_success(self, game: DVmghtGame):
         game.set_success()
         self.update_game_status_display_at(game)
@@ -357,7 +382,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         if self._selected_game != None:
             self.set_game_success(self._selected_game)
 
-    ## Retried
+    ### Retried
     def set_game_retried(self, game: DVmghtGame):
         game.set_retried()
         self.update_game_status_display_at(game)
@@ -366,7 +391,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         if self._selected_game != None:
             self.set_game_retried(self._selected_game)
 
-    ## Forced Retried
+    ### Forced Retried
     def set_game_forced(self, game: DVmghtGame):
         game.set_forced()
         self.update_game_status_display_at(game)
@@ -375,9 +400,8 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         if self._selected_game != None:
             self.set_game_forced(self._selected_game)
 
-    # Game Order
-
-    ## Shuffle All
+    ## Game Order
+    ### Shuffle All
     def shuffle_all(self):
         self.display_flow_layout.shuffle_order()
         self.update_status_display_full()
@@ -393,7 +417,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
         self.set_selected_game(self._selected_game)
         self.update_status_display_full()
 
-    ## Shuffle After
+    ### Shuffle After
     def shuffle_after(self):
         if self._selected_game != None:
             self.display_flow_layout.shuffle_order_after(self._selected_game)
@@ -410,7 +434,7 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
             self.display_flow_layout.clear_status_after(self._selected_game)
         self.update_status_display_full()
 
-    ## Smart Shuffle
+    ### Smart Shuffle
     def smart_shuffle(self, shuffle_failed: bool = True, clear_failed: bool = False):
         if self._selected_game != None:
             self.display_flow_layout.shift_success(
@@ -421,8 +445,13 @@ class ContentWindow(Ui_ContentWindow, QtWidgets.QMainWindow):
                 self.set_selected_game(self._selected_game)
             self.update_status_display_full()
 
-    ## Move Items
+    def smart_clear(self):
+        self.smart_shuffle(shuffle_failed = True, clear_failed = True)
 
+    def smart_shift(self):
+        self.smart_shuffle(shuffle_failed = False, clear_failed = False)
+
+    ## Move Games
     ### Move Far Left
     def move_game_far_left(self, game: DVmghtGame):
         self.display_flow_layout.move_far_left(game)

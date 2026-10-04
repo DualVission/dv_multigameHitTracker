@@ -68,13 +68,13 @@ class json_lib():
    
     @classmethod
     def _encode(value: Any) -> Any:
-        if isinstance(value, Enum | Flag):
+        if hasattr(value, "to_json"):
+            return value.to_json()
+        elif isinstance(value, Enum | Flag):
             return value.value
-       
-        if isinstance(value, list | tuple):
+        elif isinstance(value, list | tuple):
             return [ cls._encode(v) for v in value]
-       
-        if isinstance(value, dict):
+        elif isinstance(value, dict):
             return { cls._encode(k): cls._encode(v) for k, v in value.items() }
        
         return value
@@ -100,7 +100,7 @@ class json_lib():
             ]
        
         elif type_origin is tuple:
-            type_args = typing.get_args(type_)
+            type_args = typing.get_args(to_type)
             if type_args:
                 if len(type_args) == 2 and type_args[1] == Ellipsis:
                     value_types = [type_args[0]] * len(arg)
@@ -129,18 +129,7 @@ class json_lib():
             )
        
         elif hasattr(to_type, "from_json"):
-            arg_spec = inspect.getfullargspec(to_type.from_json)
-   
-            return to_type.from_json(
-                arg,
-                **{
-                    k: v
-                    for k, v in extra_args.items()
-                    if arg_spec.varkw is not None
-                    or k in arg_spec.args
-                    or k in arg_spec.kwonlyargs
-                },
-            )
+            return to_type.from_json(arg)
 
         return arg
 

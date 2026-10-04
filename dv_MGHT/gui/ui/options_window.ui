@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>optionsWindow</class>
- <widget class="QDialog" name="optionsWindow">
+ <class>OptionsWindow</class>
+ <widget class="QDialog" name="OptionsWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -52,9 +52,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
-          <width>342</width>
-          <height>348</height>
+          <y>-34</y>
+          <width>330</width>
+          <height>390</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="optionsLayout">
@@ -115,45 +115,14 @@
             </widget>
            </item>
            <item>
-            <layout class="QGridLayout" name="statusColorGrid" columnstretch="1,0">
-             <item row="1" column="1">
-              <widget class="QToolButton" name="statusSelectedButton">
+            <layout class="QGridLayout" name="statusColorGrid" columnstretch="1,0,0">
+             <item row="5" column="0">
+              <widget class="QLabel" name="statusForceFailedLabel">
                <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="statusFailedLabel">
-               <property name="text">
-                <string>Failure</string>
+                <string>Force Failed</string>
                </property>
                <property name="buddy">
-                <cstring>statusFailedButton</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QToolButton" name="statusFailedButton">
-               <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="statusCurrentLabel">
-               <property name="text">
-                <string>Current</string>
-               </property>
-               <property name="buddy">
-                <cstring>statusCurrentButton</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QToolButton" name="statusForceFailedButton">
-               <property name="text">
-                <string>...</string>
+                <cstring>statusForceFailedButton</cstring>
                </property>
               </widget>
              </item>
@@ -167,16 +136,6 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="statusSuccessLabel">
-               <property name="text">
-                <string>Successful</string>
-               </property>
-               <property name="buddy">
-                <cstring>statusSuccessButton</cstring>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="statusUpcomingLabel">
                <property name="text">
@@ -187,36 +146,174 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QToolButton" name="statusSuccessButton">
+             <item row="2" column="0">
+              <widget class="QLabel" name="statusCurrentLabel">
                <property name="text">
-                <string>...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="statusForceFailedLabel">
-               <property name="text">
-                <string>Force Failed</string>
+                <string>Current</string>
                </property>
                <property name="buddy">
-                <cstring>statusForceFailedButton</cstring>
+                <cstring>statusCurrentButton</cstring>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="2" column="2">
               <widget class="QToolButton" name="statusCurrentButton">
                <property name="text">
+                <string notr="true">...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QToolButton" name="statusForceFailedButton">
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="statusFailedLabel">
+               <property name="text">
+                <string>Failure</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusFailedButton</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QToolButton" name="statusFailedButton">
+               <property name="text">
                 <string>...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QToolButton" name="statusSuccessButton">
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QToolButton" name="statusUpcomingButton">
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QToolButton" name="statusSelectedButton">
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="statusSuccessLabel">
+               <property name="text">
+                <string>Successful</string>
+               </property>
+               <property name="buddy">
+                <cstring>statusSuccessButton</cstring>
                </property>
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QToolButton" name="statusUpcomingButton">
+              <widget class="QToolButton" name="statusUpcomingRevert">
                <property name="text">
-                <string>...</string>
+                <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
                </property>
               </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QToolButton" name="statusSelectedRevert">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QToolButton" name="statusCurrentRevert">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QToolButton" name="statusSuccessRevert">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QToolButton" name="statusFailedRevert">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QToolButton" name="statusForceFailedRevert">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="hotkeyLayout">
+           <item>
+            <widget class="QLabel" name="hotkeyLabel">
+             <property name="toolTip">
+              <string>Hotkey Options
+(Only takes effect after application restart)</string>
+             </property>
+             <property name="text">
+              <string>Hotkey Options*</string>
+             </property>
+             <property name="sectionHeader" stdset="0">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="hotkeyGrid" columnstretch="1,0">
+             <item row="0" column="0">
+              <widget class="QLabel" name="hotkeyGlobalLabel">
+               <property name="toolTip">
+                <string>Enable Global Hotkeys
+(Only takes effect after application restart)
+(Only where applicable)</string>
+               </property>
+               <property name="text">
+                <string>Enable Global Hotkeys*</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="checkBox"/>
              </item>
             </layout>
            </item>
@@ -242,7 +339,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>optionsWindow</receiver>
+   <receiver>OptionsWindow</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -258,7 +355,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>optionsWindow</receiver>
+   <receiver>OptionsWindow</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

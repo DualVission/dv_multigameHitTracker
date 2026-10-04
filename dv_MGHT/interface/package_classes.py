@@ -41,7 +41,7 @@ def _id_transformation(raw_id: str) -> str:
     }
     for to_replace, replace_with in trans_dict.items():
         trans_id = trans_id.replace(to_replace, replace_with)
-    trans_id = re.search(r"(__|)[a-z0-9]\w+", trans_id).group()
+    trans_id = re.search(r"(__|)[a-z0-9_.-]+", trans_id).group()
     if trans_id != raw_id:
         print("raw_id `{}` was transformed to `{}`.".format(raw_id, trans_id))
     return trans_id
@@ -49,8 +49,12 @@ def _id_transformation(raw_id: str) -> str:
 hash_words: list[str] = []
 
 def _hash_package_to_game(package: DVmghtPackage) -> str:
-    game_seed = "{}: {}".format(package.name, len(package.games))
     # This should guarantee each game gets the same seed each time assuming order is consistent
+    game_seed = "{}: {}".format(package.name, len(package.games))
+    if len(package.games) >= 0:
+        # This should guarantee each split gets the same seed each time assuming order is consistent
+        game_seed = game_seed + " ({})".format(len(package.games[-1].splits))
+        
     game_random = Random(game_seed)
 
     hash_number = game_random.randint(0, 999)

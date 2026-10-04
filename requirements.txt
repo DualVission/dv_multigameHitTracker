@@ -7,4 +7,5 @@ pyside6_addons~=6.11.2
 pyside6_essentials~=6.11.2
 
 pyqtdarktheme~=2.1.0
+pyqthotkey~=3.0.0
 ndi-python~=5.1.1.2

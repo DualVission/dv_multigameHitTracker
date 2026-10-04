@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any, TypeVar, get_origin
 
 from PySide6 import QtCore, QtGui
 
+import dv_MGHT.gui.lib.exposed_methods as exposed_m
+
 from dv_MGHT.interface import persistent_options
 from dv_MGHT.interface.json_tools import json_lib, JSONDecodeError
 from dv_MGHT.interface.package_classes import DVmghtPackage, DVmghtGame, DVmghtStatus
@@ -314,7 +316,7 @@ class package_Options(localData):
     def games(self, value: dict[str, game_Options]) -> None:
         self._edit_field("games", value)
 
-class status_color_options():
+class statusColorOptions():
     _UPCOMING:     QtGui.QColor | None = None
     _SELECTED:     QtGui.QColor | None = None
     _CURRENT:      QtGui.QColor | None = None
@@ -338,30 +340,47 @@ class status_color_options():
     _d_FAILED       = QtGui.QColor("#d21")
     _d_FORCE_FAILED = QtGui.QColor("#f0f")
 
-    def __init__(self):
-        pass
+    def __init__(self, parent):
+        self.__parent = parent
+
+    @classmethod
+    def from_dict(self, parent, persistent: dict) -> statusColorOptions:
+        new_status_colors = statusColorOptions(parent)
+        for field_name, value in persistent.items():
+            if value != None:
+                new_status_colors._set_field(field_name, value)
+        return new_status_colors
 
     def __eq__(self, other):
-        if not isinstance(other, status_color_options):
+        if not isinstance(other, statusColorOptions):
             return False
         return self.to_dict() == other.to_dict()
 
     def __str__(self):
         return str(self.to_dict())
 
-    def _set_field(self, field_name: str, value) -> None:
-        new_color: QtGui.QColor
-        if isinstance(value, QtGui.QColor):
-            new_color = value
-        elif isinstance(value, list) or isinstance(value, tuple):
-            new_color = QtGui.QColor(*value)
-        elif isinstance(value, str):
-            new_color = QtGui.QColor(value)
-        elif isinstance(value, None):
+    def _edit_field(self, field_name: str, new_value) -> None:
+        current_value = getattr(self, field_name)
+        if current_value != new_value:
+            self.__parent._check_editable_and_mark_dirty()
+            self._set_field(field_name, new_value)
+
+    def _set_field(self, field_name: str, new_value) -> None:
+        new_color: QtGui.QColor | None
+        if isinstance(new_value, QtGui.QColor):
+            new_color = new_value
+        elif isinstance(new_value, list) or isinstance(new_value, tuple):
+            new_color = QtGui.QColor(*new_value)
+        elif isinstance(new_value, str):
+            new_color = QtGui.QColor(new_value)
+        elif value == None:
             new_color = None
         else:
             raise TypeError("Expected QColor or String. Received {}.".format(type(value)))
-        setattr(self, "_" + field_name, new_color)
+        if new_color != getattr(self, "_d_" + field_name):
+            setattr(self, "_" + field_name, new_color)
+        else:
+            setattr(self, "_" + field_name, None)
 
     def to_dict(self) -> dict[str, list[int]] | None:
         data_to_persist = {}
@@ -379,7 +398,7 @@ class status_color_options():
             return value
         return getattr(self, "_d_" + field_name)
 
-    def get_color_from_status(self, check_status) -> QtGui.QColor:
+    def get_color_from_status(self, check_status: DVmghtStatus) -> QtGui.QColor:
         if check_status.name == "SELECTED":
             return self.SELECTED
         if check_status.name == "CURRENT":
@@ -396,74 +415,200 @@ class status_color_options():
         color = self.get_color_from_status(check_status)
         return hex(color.rgba())[4:]
 
+    def is_default(self, check_status: DVmghtStatus) -> bool:
+        value = getattr(self, "_" + check_status.name, None)
+        return value == None
+
     @property
     def UPCOMING(self) -> QtGui.QColor:
         return self._return_with_default("UPCOMING")
     @UPCOMING.setter
     def UPCOMING(self, value) -> None:
-        self._set_field("UPCOMING", value)
+        self._edit_field("UPCOMING", value)
 
     @property
     def SELECTED(self) -> QtGui.QColor:
         return self._return_with_default("SELECTED")
     @SELECTED.setter
     def SELECTED(self, value) -> None:
-        self._set_field("SELECTED", value)
+        self._edit_field("SELECTED", value)
 
     @property
     def CURRENT(self) -> QtGui.QColor:
         return self._return_with_default("CURRENT")
     @CURRENT.setter
     def CURRENT(self, value) -> None:
-        self._set_field("CURRENT", value)
+        self._edit_field("CURRENT", value)
 
     @property
     def SUCCESS(self) -> QtGui.QColor:
         return self._return_with_default("SUCCESS")
     @SUCCESS.setter
     def SUCCESS(self, value) -> None:
-        self._set_field("SUCCESS", value)
+        self._edit_field("SUCCESS", value)
 
     @property
     def FAILED(self) -> QtGui.QColor:
         return self._return_with_default("FAILED")
     @FAILED.setter
     def FAILED(self, value) -> None:
-        self._set_field("FAILED", value)
+        self._edit_field("FAILED", value)
 
     @property
     def FORCE_FAILED(self) -> QtGui.QColor:
         return self._return_with_default("FORCE_FAILED")
     @FORCE_FAILED.setter
     def FORCE_FAILED(self, value) -> None:
-        self._set_field("FORCE_FAILED", value)
+        self._edit_field("FORCE_FAILED", value)
+
+class hotkeyOptions():
+    _exposed_methods: dict[ str, list[ QtGui.QKeySequence ] ] = {
+        k: [] for k in exposed_m.ALL_EXPOSED_METHODS.keys()
+    }
+    _d_exposed_methods: dict[str, QtGui.QKeySequence | None] = {}
+
+    def __init__(self, parent):
+        for field_name, value in exposed_m.ALL_EXPOSED_METHODS.items():
+            self._d_exposed_methods[field_name] = self._convert_value(value)
+        self.__parent = parent
+
+    @classmethod
+    def from_dict(self, parent, persistent: dict) -> hotkeyOptions:
+        new_hotkey_options = hotkeyOptions(parent)
+        for field_name, value in persistent.items():
+            if value != None:
+                new_hotkey_options._set_field(field_name, value)
+        return new_hotkey_options
+
+    def __eq__(self, other):
+        if not isinstance(other, hotkeyOptions):
+            return False
+        return self.to_dict() == other.to_dict()
+
+    def __len__(self):
+        output: int = 0
+        for value in self._exposed_methods.values():
+            output += 1 if len(value) >= 0 else 0
+        return output
+
+    def __getitem__(self, field_name: str) -> list[QtGui.QKeySequence]:
+        return self._return_with_default(field_name)
+
+    def __setitem__(self, field_name: str, new_value: list | None):
+        self._edit_field(field_name, new_value)
+
+    def __delitem__(self, field_name: str):
+        self._edit_field(field_name, None)
+
+    def __contains__(self, field_name: str):
+        return field_name in self.exposed_methods.keys()
+
+    def keys(self):
+        return self._exposed_methods.keys()
+
+    def values(self):
+        return self._exposed_methods.values()
+
+    def items(self):
+        return self._exposed_methods.items()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    def to_dict(self) -> dict[str, list[str]] | None:
+        data_to_persist = {}
+        for field_name, value in self._exposed_methods.items():
+            if len(value) <= 0:
+                data_to_persist[field_name] = [v.toString() for v in value]
+        if len(data_to_persist.keys()) <= 0:
+            return None
+        return data_to_persist
+
+    def _edit_field(self, field_name: str, new_value: list | None) -> None:
+        current_value = self._exposed_methods[field_name]
+        if current_value != new_value:
+            self.__parent._check_editable_and_mark_dirty()
+            self._set_field(field_name, new_value)
+
+    def _set_field(
+        field_name: str,
+        new_value: list,
+        raise_on_error: bool = False
+    ) -> None:
+        self._exposed_methods[field_name] = self._convert_value(new_value, raise_on_error)
+
+    @classmethod
+    def _convert_value(
+        cls,
+        new_value: list | str,
+        raise_on_error: bool = False
+    ) -> list[QtGui.QKeySequence] | None:
+        if new_value == None:
+            return []
+        elif isinstance(new_value, str):
+            new_value: list[str] = [ new_value ]
+        new_sequence: list[QtGui.QKeySequence] = []
+        new_input: QtGui.QKeySequence | None
+        for raw_input in new_value:
+            new_input = None
+            if isinstance(raw_input, str):
+                new_input = QtGui.QKeySequence.fromString(raw_input)
+            elif isinstance(raw_input, QtGui.QKeySequence):
+                new_input = raw_input
+            elif raw_input == None:
+                continue
+            else:
+                err_txt = "Expected QKeySequence or String. Received {}.".format(
+                    type(raw_input)
+                )
+                if raise_on_error:
+                    raise TypeError(err_txt)
+                else:
+                    print(err_txt + " Error bypassed.")
+                    continue
+            if new_input != None:
+                new_sequence.append(new_input)
+        
+        return new_sequence
+
+    def _return_with_default(self, field_name: str | None) -> list[QtGui.QKeySequence]:
+        value = self._exposed_methods[field_name]
+        if value != None:
+            return value
+        return self._d_exposed_methods[field_name]
+
+    def get_text(self, field_name: str) -> str:
+        if len(self._exposed_methods[field_name]) <= 0:
+            pass
 
 class Options(localData):
     _dark_mode: bool | None = None
     _open_shuffle: bool | None = None
 
-    _status_colors: status_color_options | None = None
-    _color_updating: bool = True
+    _status_colors: statusColorOptions
+
+    _global_hotkeys: bool | None = None
+    _hotkeys: hotkeyOptions
 
     def __init__(
         self,
         data_dir: Path,
         user_dir: Path | None = None
     ):
-        def status_colors_decoder(persistent: dict) -> status_color_options:
-            new_status_colors = status_color_options()
-            for field_name, value in persistent.items():
-                if value != None:
-                    new_status_colors._set_field(field_name, value)
-            return new_status_colors
-
         super().__init__(data_dir, user_dir)
+        self._status_colors = statusColorOptions(self)
+        self._hotkeys = hotkeyOptions(self)
         self._SERIAL_DICT = {
-            "dark_mode"    : Serializer(identity, bool),
-            "open_shuffle" : Serializer(identity, bool),
-            "status_colors": Serializer(
+            "dark_mode"     : Serializer(identity, bool),
+            "open_shuffle"  : Serializer(identity, bool),
+            "status_colors" : Serializer(
                 lambda obj: obj.to_dict(),
-                lambda obj: status_colors_decoder(obj)
+                lambda obj: statusColorOptions.from_dict(self, obj)
+            ),
+            "global_hotkeys": Serializer(identity, bool),
+            "hotkeys": Serializer(
+                lambda obj: obj.to_dict(),
+                lambda obj: hotkeyOptions.from_dict(self, obj)
             )
         }
 
@@ -499,8 +644,32 @@ class Options(localData):
         self._edit_field("open_shuffle", value)
 
     @property
-    def status_colors(self) -> status_color_options:
-        return _return_with_default(self._status_colors, lambda: status_color_options())
+    def status_colors(self) -> statusColorOptions:
+        if self._nested_autosave_level > 0:
+            self._is_dirty = True
+        return _return_with_default(
+            self._status_colors,
+            lambda: statusColorOptions(self)
+        )
     @status_colors.setter
-    def status_colors(self, value: status_color_options) -> None:
+    def status_colors(self, value: statusColorOptions) -> None:
         self._edit_field("status_colors", value)
+
+    @property
+    def global_hotkeys(self) -> bool:
+        return _return_with_default(self._global_hotkeys, lambda: False)
+    @global_hotkeys.setter
+    def global_hotkeys(self, value: bool) -> None:
+        self._edit_field("global_hotkeys", value)
+
+    @property
+    def hotkeys(self) -> hotkeyOptions:
+        if self._nested_autosave_level > 0:
+            self._is_dirty = True
+        return _return_with_default(
+            self._hotkeys,
+            lambda: hotkeyOptions(self)
+        )
+    @hotkeys.setter
+    def hotkeys(self, value: hotkeyOptions) -> None:
+        self._edit_field("hotkeys", value)
