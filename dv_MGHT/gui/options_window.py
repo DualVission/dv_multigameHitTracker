@@ -99,8 +99,6 @@ class OptionsWindow(Ui_OptionsWindow, QtWidgets.QDialog):
 
         self.hotkeys_ui: dict[str, dict[str, QtWidgets.QWidget]] = {}
         i: int = 1
-        QHotkeyPicker.setKeyName(Qt.Key.Key_Control, "Ctrl")
-        # QHotkeyPicker.setKeyName(Qt.Key.Key_Shift, "Ctrl")
 
         for field_name, text in CONTENT_WINDOW_HOTKEY_LABELS.items():
             new_dict: dict[str, QtWidgets.QWidget] = {}
@@ -108,9 +106,22 @@ class OptionsWindow(Ui_OptionsWindow, QtWidgets.QDialog):
             new_label.setToolTip(text["tooltip"])
             self.hotkeyGrid.addWidget(new_label, i, 0)
             new_dict["label"] = new_label
-            new_picker = QHotkeyPicker(self)
+            new_picker = QHotkeyPicker(
+                self,
+                default_text=str(text["hotkey"])
+            )
             new_dict["picker"] = new_picker
             self.hotkeyGrid.addWidget(new_picker, i, 1)
+            if len(self._options.hotkeys[field_name]) > 0:
+                new_picker.setHotkeyFromString(
+                    self._options.hotkeys[field_name][0].toString()
+                )
+            new_picker.hotkeyChanged.connect(partial(
+                self._on_hotkey_button,
+                field_name
+            ))
+            new_label.setVisible(advanced_options or text["visible"])
+            new_picker.setVisible(advanced_options or text["visible"])
             self.hotkeys_ui[field_name] = new_dict
             i += 1
 
@@ -200,6 +211,14 @@ QToolButton {oc}
                 status
             ))
         self.current_color_window[status].show()
+    ## Hotkeys
+    def _on_hotkey_button(self, method_name: str, hotkey: QKeyCombination, text: str):
+        with self._options as options:
+            options.hotkeys._set_field(
+                method_name,
+                [ text ]
+            )
+        self.on_options_changed()
 
     def update_status_full(self):
         self.parent.update_status_full()

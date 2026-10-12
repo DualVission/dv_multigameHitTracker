@@ -518,7 +518,7 @@ class hotkeyOptions():
     def to_dict(self) -> dict[str, list[str]] | None:
         data_to_persist = {}
         for field_name, value in self._exposed_methods.items():
-            if len(value) <= 0:
+            if len(value) > 0:
                 data_to_persist[field_name] = [v.toString() for v in value]
         if len(data_to_persist.keys()) <= 0:
             return None
@@ -531,6 +531,7 @@ class hotkeyOptions():
             self._set_field(field_name, new_value)
 
     def _set_field(
+        self,
         field_name: str,
         new_value: list,
         raise_on_error: bool = False
@@ -554,6 +555,8 @@ class hotkeyOptions():
             if isinstance(raw_input, str):
                 new_input = QtGui.QKeySequence.fromString(raw_input)
             elif isinstance(raw_input, QtGui.QKeySequence):
+                new_input = raw_input
+            elif isinstance(raw_input, QtGui.QKeyCombination):
                 new_input = raw_input
             elif raw_input == None:
                 continue

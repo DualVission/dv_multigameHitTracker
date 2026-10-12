@@ -58,7 +58,7 @@ ALL_EXPOSED_METHODS: dict[str, str | None] = __zip_dict_list(
     **ALL_EXPOSED_METHODS_WITH_HOTKEYS
 )
 
-CONTENT_WINDOW_HOTKEY_LABELS: dict[str, dict[str, str]] = {
+CONTENT_WINDOW_HOTKEY_LABELS: dict[str, dict[str, str | bool]] = {
     "open_state": {
         "label": QCoreApplication.translate(
             "ContentWindow",
@@ -197,7 +197,8 @@ CONTENT_WINDOW_HOTKEY_LABELS: dict[str, dict[str, str]] = {
         "tooltip": QCoreApplication.translate(
             "ContentWindow",
             u"Set Selected Game to Force Retry"
-        )
+        ),
+        "visible": False
     },
     "shuffle_all": {
         "label": QCoreApplication.translate(
@@ -280,6 +281,11 @@ CONTENT_WINDOW_HOTKEY_LABELS: dict[str, dict[str, str]] = {
         )
     }
 }
+
+for key, value in CONTENT_WINDOW_HOTKEY_LABELS.items():
+    if "visible" not in value.keys():
+        value["visible"] = True
+    value["hotkey"] = CONTENT_WINDOW_EXPOSED_METHODS[key]
 
 def get_default_hotkeys(*args) -> str | dict[str, str]:
         if len(args) == 1:

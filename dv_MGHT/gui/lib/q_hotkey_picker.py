@@ -7,18 +7,23 @@ from pyqthotkey import HotkeyPicker
 class QHotkeyPicker(HotkeyPicker):
     hotkeyChanged = Signal(object, object)
 
-    __key_code_map = {}
+    __key_code_map: dict[Qt.Key, str] = {}
     for name in [name for name in dir(Qt.Key) if "Key_" in name]:
         key = getattr(Qt, name)
         __key_code_map[key] = name.partition('_')[-1]
 
     # Manually change name for some keys
+    __key_code_map[Qt.Key.Key_Control]    = 'Ctrl'
     __key_code_map[Qt.Key.Key_Space]      = 'Space'
     __key_code_map[Qt.Key.Key_Adiaeresis] = 'Ä'
     __key_code_map[Qt.Key.Key_Odiaeresis] = 'Ö'
     __key_code_map[Qt.Key.Key_Udiaeresis] = 'Ü'
     __key_code_map[Qt.Key.Key_Equal]      = 'Plus'
     __key_code_map[Qt.Key.Key_Minus]      = 'Minus'
+
+    __name_key_map: dict[str, Qt.Key] = {
+        v: k for k, v in __key_code_map.items()
+    }
 
     __in_selection: bool = False
     __selected_key: QKeyCombination | None = None
@@ -61,6 +66,34 @@ class QHotkeyPicker(HotkeyPicker):
         keys = event.keyCombination()
         self.setHotkey(keys)
 
+    def focusOutEvent(self, event):
+        if self.__in_selection:
+            self.setText(
+                self.__default_text
+                if self.__selected_key == None else
+                QHotkeyPicker.getKeyName(self.__selected_key)
+            )
+        self.__in_selection = False
+
+    def setHotkeyFromString(self, inputS: str) -> None:
+        keys_raw = inputS.split("+")
+        key: Qt.Keys = Qt.Key_unknown
+        modifiers: Qt.KeyboardModifier = Qt.NoModifier
+        for key_raw in keys_raw:
+            match key_raw:
+                case "Ctrl":
+                    modifiers |= Qt.ControlModifier
+                case "Shift":
+                    modifiers |= Qt.ShiftModifier
+                case "Alt":
+                    modifiers |= Qt.AltModifier
+                case _:
+                    key = self.__name_key_map[key_raw]
+
+        if key == Qt.Key_unknown:
+            return
+        self.setHotkey(QKeyCombination(modifiers, key))
+
     def setHotkey(self, keys: QKeyCombination) -> None:
         if keys.key() == self.getCancelKey():
             self.setText(self.getDefaultText())
@@ -83,7 +116,7 @@ class QHotkeyPicker(HotkeyPicker):
         self.clearFocus()
 
         self.hotkeyChanged.emit(
-            self.getHotkeyName(),
+            self.__selected_key,
             self.text()
         )
 
@@ -105,3 +138,4 @@ class QHotkeyPicker(HotkeyPicker):
         if isinstance(keys, QKeyCombination):
             keys = keys.key()
         QHotkeyPicker.__key_code_map[keys] = name
+        QHotkeyPicker.__name_key_map[name] = keys
